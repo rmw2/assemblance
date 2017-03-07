@@ -1,0 +1,30 @@
+/* style.css */
+/* Author: Rob Whitaker */
+
+#source {
+	background-color: #DDD;
+	color: #000;
+	width: 50%;
+	height: 100%;
+}
+
+#asm {
+	background-color: #EFEFEF;
+	width: 50%;
+	height: 100%;
+}
+
+#toolbar {
+	background-color: #66B9BF;
+	padding: 5pt;
+	height: 40pt;
+}
+
+input {
+	margin: auto;
+}
+
+.content {
+	padding: 5pt;
+	font-family: Monospace;
+}
