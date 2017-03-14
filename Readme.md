@@ -1,4 +1,4 @@
-# Digestible Assembly
+# A semblance of assembly
 Learning an assembly language is very helpful for understanding machine operations at a low level, and knowing the ways that that machine translates expressive lines of C source (for example) into individual instructions can help one write more efficient code.
 Unfortunately, most tools dedicated to compilers and assembly languages are geared towards experts, and there are relatively few resources available to those trying to learn assembly from scratch.
 
