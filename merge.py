@@ -24,7 +24,7 @@ def readfiles(fnames):
 			with open(name, 'r') as file:
 				source.append(file.readlines())
 		elif name.endswith('.s'):
-			asmname = name.strip('.s') + '-merged.s'
+			asmname = name[:-2] + '-merged.s'
 			# Assume single assembly file, save lines in list
 			with open(name, 'r') as file:
 				asm = file.readlines()

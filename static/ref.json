@@ -1,0 +1,471 @@
+{
+	// Moves
+	"movq"		: {
+		"name"	: "Move",
+		"syn"	: "src dest",
+		"size"	: [8, 8],
+		"type"	: ["IRM", "RM"],
+		"desc"	: "Copy src to dest.",
+		"flags"	: []
+	},
+	"movl"		: {
+		"name"	: "Move",
+		"syn"	: "src dest",
+		"size"	: [4, 4],
+		"type"	: ["IRM", "RM"],
+		"desc"	: "Copy src to dest.",
+		"flags"	: []
+	},
+	"movw"		: {
+		"name"	: "Move",
+		"syn"	: "src dest",
+		"size"	: [2, 2],
+		"type"	: ["IRM", "RM"],
+		"desc"	: "Copy src to dest.",
+		"flags"	: []
+	},
+	"movb"		: {
+		"name"	: "Move",
+		"syn"	: "src dest",
+		"size"	: [1, 1],
+		"type"	: ["IRM", "RM"],
+		"desc"	: "Copy src to dest.",
+		"flags"	: []
+	},
+	"movabsq"	: {
+		"name"	: "Move",
+		"syn"	: "src dest",
+		"size"	: [8, 8],
+		"type"	: ["IRM", "R"],
+		"desc"	: "Copy src to dest. src can be up to 8 bytes long, and dest must be a register.",
+		"flags"	: []
+	},
+
+	// Sign-extended moves
+	"movsbq"	: {
+		"name"	: "Move Sign-Extended",
+		"syn"	: "src dest",
+		"size"	: [1, 8],
+		"type"	: ["RM", "R"],
+		"desc"	: "Copy src to dest, extending the sign of src.",
+		"flags"	: []
+	},
+	"movsbl"	: {
+		"name"	: "Move Sign-Extended",
+		"syn"	: "src dest",
+		"size"	: [1, 4],
+		"type"	: ["RM", "R"],
+		"desc"	: "Copy src to dest, extending the sign of src.",
+		"flags"	: []
+	},
+	"movsbw"	: {
+		"name"	: "Move Sign-Extended",
+		"syn"	: "src dest",
+		"size"	: [1, 2],
+		"type"	: ["RM", "R"],
+		"desc"	: "Copy src to dest, extending the sign of src.",
+		"flags"	: []
+	},
+	"movswq"	: {
+		"name"	: "Move Sign-Extended",
+		"syn"	: "src dest",
+		"size"	: [2, 8],
+		"type"	: ["RM", "R"],
+		"desc"	: "Copy src to dest, extending the sign of src.",
+		"flags"	: []
+	},
+	"movswl"	: {
+		"name"	: "Move Sign-Extended",
+		"syn"	: "src dest",
+		"size"	: [2, 4],
+		"type"	: ["RM", "R"],
+		"desc"	: "Copy src to dest, extending the sign of src.",
+		"flags"	: []
+	},
+	"movslq"	: {
+		"name"	: "Move Sign-Extended",
+		"syn"	: "src dest",
+		"size"	: [4, 8],
+		"type"	: ["RM", "R"],
+		"desc"	: "Copy src to dest, extending the sign of src.",
+		"flags"	: []
+	},
+
+	// Zero-extended moves
+	"movzbq"	: {
+		"name"	: "Move Zero-Extended",
+		"syn"	: "src dest",
+		"size"	: [1, 8],
+		"type"	: ["RM", "R"],
+		"desc"	: "Copy src to dest, setting the high-order bytes of dest to zero.",
+		"flags"	: []
+	},
+	"movzbl"	: {
+		"name"	: "Move Zero-Extended",
+		"syn"	: "src dest",
+		"size"	: [1, 4],
+		"type"	: ["RM", "R"],
+		"desc"	: "Copy src to dest, setting the high-order bytes of dest to zero.",
+		"flags"	: []
+	},
+	"movzbw"	: {
+		"name"	: "Move Zero-Extended",
+		"syn"	: "src dest",
+		"size"	: [1, 2],
+		"type"	: ["RM", "R"],
+		"desc"	: "Copy src to dest, setting the high-order bytes of dest to zero.",
+		"flags"	: []
+	},
+	"movzwq"	: {
+		"name"	: "Move Zero-Extended",
+		"syn"	: "src dest",
+		"size"	: [2, 8],
+		"type"	: ["RM", "R"],
+		"desc"	: "Copy src to dest, setting the high-order bytes of dest to zero.",
+		"flags"	: []
+	},
+	"movzwl"	: {
+		"name"	: "Move Zero-Extended",
+		"syn"	: "src dest",
+		"size"	: [2, 4],
+		"type"	: ["RM", "R"],
+		"desc"	: "Copy src to dest, setting the high-order bytes of dest to zero.",
+		"flags"	: []
+	},
+
+	// Conditional moves
+	"cmove"		: {
+		"name"	: "Conditional Move (Equal)",
+		"syn"	: "src dest",
+		"size"	: [0,0],
+		"type"	: ["RM", "R"],
+		"desc"	: "Copy long or word operand src to long or word register dest iff the flags in the EFLAGS register indicate an equal to.",
+		"flags"	: []
+	},
+	"cmovne"	: {
+		"name"	: "Conditional Move (Not Equal)",
+		"syn"	: "src dest",
+		"size"	: [0,0],
+		"type"	: ["RM", "R"],
+		"desc"	: "Copy long or word operand src to long or word register dest iff the flags in the EFLAGS register indicate not equal to.",
+		"flags"	: []
+	},
+	"cmovl"	: {
+		"name"	: "Conditional Move (Less than)",
+		"syn"	: "src dest",
+		"size"	: [0,0],
+		"type"	: ["RM", "R"],
+		"desc"	: "Copy long or word operand src to long or word register dest iff the flags in the EFLAGS register indicate less than (signed numbers).",
+		"flags"	: []
+	},
+	"cmovle"	: {
+		"name"	: "Conditional Move (Less than or Equal)",
+		"syn"	: "src dest",
+		"size"	: [0,0],
+		"type"	: ["RM", "R"],
+		"desc"	: "Copy long or word operand src to long or word register dest iff the flags in the EFLAGS register indicate less than (signed numbers) or equal to.",
+		"flags"	: []
+	},
+	"cmovg"	: {
+		"name"	: "Conditional Move (Greater than)",
+		"syn"	: "src dest",
+		"size"	: [0,0],
+		"type"	: ["RM", "R"],
+		"desc"	: "Copy long or word operand src to long or word register dest iff the flags in the EFLAGS register indicate greater than (signed numbers).",
+		"flags"	: []
+	},
+	"cmovge"	: {
+		"name"	: "Conditional Move (Greater than or Equal)",
+		"syn"	: "src dest",
+		"size"	: [0,0],
+		"type"	: ["RM", "R"],
+		"desc"	: "Copy long or word operand src to long or word register dest iff the flags in the EFLAGS register indicate greater than or equal to (signed numbers).",
+		"flags"	: []
+	},
+	"cmovb"	: {
+		"name"	: "Conditional Move (Below)",
+		"syn"	: "src dest",
+		"size"	: [0,0],
+		"type"	: ["RM", "R"],
+		"desc"	: "Copy long or word operand src to long or word register dest iff the flags in the EFLAGS register indicate below (unsigned numbers).",
+		"flags"	: []
+	},
+	"cmovbe"	: {
+		"name"	: "Conditional Move (Below or Equal)",
+		"syn"	: "src dest",
+		"size"	: [0,0],
+		"type"	: ["RM", "R"],
+		"desc"	: "Copy long or word operand src to long or word register dest iff the flags in the EFLAGS register indicate below (unsigned numbers) or equal.",
+		"flags"	: []
+	},
+	"cmova"	: {
+		"name"	: "Conditional Move (Above)",
+		"syn"	: "src dest",
+		"size"	: [0,0],
+		"type"	: ["RM", "R"],
+		"desc"	: "Copy long or word operand src to long or word register dest iff the flags in the EFLAGS register indicate above (unsigned numbers).",
+		"flags"	: []
+	},
+	"cmovae"	: {
+		"name"	: "Conditional Move (Above or Equal)",
+		"syn"	: "src dest",
+		"size"	: [0,0],
+		"type"	: ["RM", "R"],
+		"desc"	: "Copy long or word operand src to long or word register dest iff the flags in the EFLAGS register indicate above (unsigned numbers) or equal.",
+		"flags"	: []
+	},
+
+	// push and pop
+	"pushq"	: {
+		"name"	: "Push",
+		"syn"	: "src",
+		"size"	: [8],
+		"type"	: ["IRM"],
+		"desc"	: "Push src onto the stack.  Equivalent to \nsubq $8, %rsp\nmovq src (%rsp)",
+		"flags"	: []
+	},
+	"pushw"	: {
+		"name"	: "Push",
+		"syn"	: "src",
+		"size"	: [2],
+		"type"	: ["IRM"],
+		"desc"	: "Push src onto the stack.  Equivalent to \nsubq $2, %rsp\nmovw src (%rsp)",
+		"flags"	: []
+	},
+	"popq"	: {
+		"name"	: "Push",
+		"syn"	: "src",
+		"size"	: [8],
+		"type"	: ["RM"],
+		"desc"	: "Pop from the stack into dest.  Equivalent to \nmovq (%rsp) dest\naddq $8, %rsp",
+		"flags"	: []
+	},
+	"popw"	: {
+		"name"	: "Push",
+		"syn"	: "src",
+		"size"	: [2],
+		"type"	: ["RM"],
+		"desc"	: "Pop from the stack into dest.  Equivalent to \nmovw (%rsp) dest\naddq $2, %rsp",
+		"flags"	: []
+	},
+
+	// load effective address
+	"leaq"	: {
+		"name"	: "Load Effective Address",
+		"syn"	: "src dest",
+		"size"	: [8, 8],
+		"type"	: ["M", "R"],
+		"desc"	: "Assign the address of src to dest. That is, determine the address denoted by src, but don't fetch data from that address; instead use the address itself.",
+		"flags"	: []
+	},
+	"leal"	: {
+		"name"	: "Load Effective Address",
+		"syn"	: "src dest",
+		"size"	: [4, 4],
+		"type"	: ["M", "R"],
+		"desc"	: "Assign the address of src to dest. That is, determine the address denoted by src, but don't fetch data from that address; instead use the address itself.",
+		"flags"	: []
+	},
+	"leaw"	: {
+		"name"	: "Load Effective Address",
+		"syn"	: "src dest",
+		"size"	: [2, 2],
+		"type"	: ["M", "R"],
+		"desc"	: "Assign the address of src to dest. That is, determine the address denoted by src, but don't fetch data from that address; instead use the address itself.",
+		"flags"	: []
+	},
+
+	// Special purpose
+	"cqto"	: {
+		"name"	: "Convert Quad to Oct Register",
+		"syn"	: "",
+		"size"	: [],
+		"type"	: [],
+		"desc"	: "Sign extend the contents of register RAX into the register pair RDX:RAX, typically in preparation for idivq.",
+		"flags"	: []
+	},
+	"cltd"	: {
+		"name"	: "Convert Long to Double Register",
+		"syn"	: "",
+		"size"	: [],
+		"type"	: [],
+		"desc"	: "Sign extend the contents of register EAX into the register pair EDX:EAX, typically in preparation for idivl.",
+		"flags"	: []
+	},
+	"cwtd"	: {
+		"name"	: "Convert Word to Double Register",
+		"syn"	: "",
+		"size"	: [],
+		"type"	: [],
+		"desc"	: "Sign extend the contents of register AX into the register pair DX:AX, typically in preparation for idivw.",
+		"flags"	: []
+	},
+	"cbtw"	: {
+		"name"	: "Convert Byte to Word",
+		"syn"	: "",
+		"size"	: [],
+		"type"	: [],
+		"desc"	: "Sign extend the contents of register AL into register AX, typically in preparation for idivb.",
+		"flags"	: []
+	},
+
+	// Arithmetic
+	"add"	: {
+		"name"	: "Add",
+		"syn"	: "src dest",
+		"size"	: [],
+		"type"	: ["IRM", "RM"],
+		"desc"	: "Add src to dest.",
+		"flags"	: ["O", "S", "Z", "A", "C", "P"]
+	},
+	"adc"	: {
+		"name"	: "Add with carry",
+		"syn"	: "src dest",
+		"size"	: [],
+		"type"	: ["IRM", "RM"],
+		"desc"	: "Add src and the C flag to dest.",
+		"flags"	: ["O", "S", "Z", "A", "C", "P"]
+	},
+	"sub"	: {
+		"name"	: "Subtract",
+		"syn"	: "src dest",
+		"size"	: [],
+		"type"	: ["IRM", "RM"],
+		"desc"	: "Subtract src from dest.",
+		"flags"	: ["O", "S", "Z", "A", "C", "P"]
+	},
+	"inc"	: {
+		"name"	: "Add",
+		"syn"	: "dest",
+		"size"	: [],
+		"type"	: [],
+		"desc"	: "Increment dest.",
+		"flags"	: ["O", "S", "Z", "A", "P"]
+	},
+	"dec"	: {
+		"name"	: "Decrement",
+		"syn"	: "dest",
+		"size"	: [],
+		"type"	: ["RM"],
+		"desc"	: "Decrement dest.",
+		"flags"	: ["O", "S", "Z", "A", "P"]
+	},
+	"neg"	: {
+		"name"	: "Negate",
+		"syn"	: "dest",
+		"size"	: [],
+		"type"	: ["RM"],
+		"desc"	: "Negate dest.",
+		"flags"	: ["O", "S", "Z", "A", "C", "P"]
+	},
+	"imul"	: {
+		"name"	: "Multiply",
+		"syn"	: "dest",
+		"size"	: [],
+		"type"	: ["IRM", "R"],
+		"desc"	: "Decrement dest.",
+		"flags"	: ["O", "S", "Z", "A", "C", "P"]
+	},
+
+	// Bitwise mnemonics
+	"and"	: {
+		"name"	: "And",
+		"syn"	: "src dest",
+		"size"	: [],
+		"type"	: ["IRM", "RM"],
+		"desc"	: "Bitwise and src into dest.",
+		"flags"	: ["O", "S", "Z", "A", "C", "P"]
+	},
+	"or"	: {
+		"name"	: "Or",
+		"syn"	: "src dest",
+		"size"	: [],
+		"type"	: ["IRM", "RM"],
+		"desc"	: "Bitwise or src into dest.",
+		"flags"	: ["O", "S", "Z", "A", "C", "P"]
+	},
+	"xor"	: {
+		"name"	: "Exclusive Or",
+		"syn"	: "src dest",
+		"size"	: [],
+		"type"	: ["IRM", "RM"],
+		"desc"	: "Bitwise exclusive or src into dest.",
+		"flags"	: ["O", "S", "Z", "A", "C", "P"]
+	},
+	"not"	: {
+		"name"	: "Not",
+		"syn"	: "dest",
+		"size"	: [],
+		"type"	: ["RM"],
+		"desc"	: "Bitwise not dest.",
+		"flags"	: []
+	},
+	"sal"	: {
+		"name"	: "Shift Arithmetic Left",
+		"syn"	: "src dest",
+		"size"	: [],
+		"type"	: ["IR", "RM"],
+		"desc"	: "Shift dest to the left by src bits, filling with zeros.  If src is a register, then it must be the CL register.",
+		"flags"	: ["O", "S", "Z", "A", "C", "P"]
+	},
+	"sar"	: {
+		"name"	: "Shift Arithmetic Right",
+		"syn"	: "src dest",
+		"size"	: [],
+		"type"	: ["IR", "RM"],
+		"desc"	: "Shift dest to the right by src bits, sign extending the number.  If src is a register, then it must be the CL register.",
+		"flags"	: ["O", "S", "Z", "A", "C", "P"]
+	},
+	"shl"	: {
+		"name"	: "Shift Left",
+		"syn"	: "src dest",
+		"size"	: [],
+		"type"	: ["IR", "RM"],
+		"desc"	: "Shift dest to the left by src bits, filling with zeros.  If src is a register, then it must be the CL register.  (Same as sal)",
+		"flags"	: ["O", "S", "Z", "A", "C", "P"]
+	},
+	"shr"	: {
+		"name"	: "Shift Right",
+		"syn"	: "src dest",
+		"size"	: [],
+		"type"	: ["IR", "RM"],
+		"desc"	: "Shift dest to the right by src bits, filling with zeros.  If src is a register, then it must be the CL register.",
+		"flags"	: ["O", "S", "Z", "A", "C", "P"]
+	},
+
+	// Control transfer
+	"cmp"	: {
+		"name"	: "Compare",
+		"syn"	: "src dest",
+		"size"	: [0, 0],
+		"type"	: ["IRM", "RM"],
+		"desc"	: "Compute dest - src and set flags in the EFLAGS register based upon the result.",
+		"flags"	: ["O", "S", "Z", "A", "C", "P"]
+	},
+	"test"	: {
+		"name"	: "Shift Arithmetic Right",
+		"syn"	: "src dest",
+		"size"	: [],
+		"type"	: ["IRM", "RM"],
+		"desc"	: "Compute dest & src and set flags in the EFLAGS register based upon the result.",
+		"flags"	: ["O = 0", "S", "A = 0", "Z", "P"]
+	},
+
+	// Control flow
+	"ret"	: {
+		"name"	: "Return",
+		"syn"	: "",
+		"size"	: [],
+		"type"	: [],
+		"desc"	: "Return from current function.  That is, pop from the stasck to the instruction pointer, to return to the address from which the function was called.",
+		"flag"	: []
+	},
+	"call"	: {
+		"Name"	: "Call",
+		"syn"	: "label",
+		"size"	: [],
+		"type"	: [],
+		"desc"	: "Push the address of the next instruction onto the stack and jump to location specified by label.",
+		"flag"	: []
+	},
+}

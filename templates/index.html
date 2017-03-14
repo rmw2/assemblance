@@ -1,0 +1,73 @@
+<html>
+<head>
+
+	<title>assemblance</title>
+
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+	<link href="https://fonts.googleapis.com/css?family=Josefin+Sans" rel="stylesheet">
+	<link rel="stylesheet" href={{url_for('static', filename='style.css')}} >
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+	<script type="text/javascript" src={{url_for('static', filename="upload.js") }}></script>
+
+</head>
+<body>
+
+<div class="container">
+	<!-- Toolbar / control area -->
+	<div class="row" id="top">
+		<!-- Title area -->
+		<div class="col-sm-3" id="title">
+			<h1> assemblance </h1>
+		</div>
+
+		<!-- Flashed messages -->
+		<div class="col-sm-6" id="flash-container">
+			{% for message in get_flashed_messages() %}
+	    		<div class=flash>{{ message }}</div>
+	  		{% endfor %}
+	  	</div>
+
+	  	<!-- Navigation -->
+	  	<div class="col-sm-3" id="menu">
+	  		<a href={{ url_for('about') }}><div class="menu-item"> about </div></a>
+	  	</div>
+
+	  	<div class="clear"></div>
+  	</div>
+
+	<!-- Text area -->
+	<div class="row">
+		<!-- left column of the page -->
+		<div class="col-sm-6" id="source">
+			<form method="post" enctype="multipart/form-data">
+				<span class="label-header"> source </span>
+				<input type="file" class="inputfile" id="upload-src" name="srcfile"></button>
+				<label class="label-button" for="upload-src"> upload file </label>
+				<div class="clear"></div>
+			</form>
+
+			<div id="source-code" class="content">
+				{% if srctext %} <pre>{{srctext|safe}}</pre>
+				{% else %} Source goes here.
+				{% endif%}
+			</div>
+		</div>
+
+		<!-- right column of the page -->
+		<div class="col-sm-6" id="asm">
+			<form method="post" enctype="multipart/form-data">
+				<span class="label-header"> assembly </span>
+				<input type="file" class="inputfile" id="upload-asm" name="asmfile" ></button>
+				<label class="label-button" for="upload-asm"> upload file </label>
+				<div class="clear"></div>
+			</form>
+
+			<div id="asm-code" class="content">
+				{% block asm %} Assembly goes here. {% endblock %}
+			</div>
+		</div><!-- /.container -->
+	</div>
+</div>
+
+</body>
+</html>
