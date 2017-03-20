@@ -12,11 +12,19 @@ Special thanks to Bob Dondero for his advising during this project, and the x86-
 * Render uploaded source file in template
 * Perform source-assembly line-matching on backend
 * Compiled dictionary of assembly mnemonics in static/ref.json
+* Assembly tokens parsed and each returned in a different div
+* Tooltips on mnemonics are functional (but ugly)
+  - All text generated on backend, visibility controlled via CSS
 
 ## TODO
-* Parse assembly on backend: identify addressing modes, registers, mnemonics, labels
-* Determine format for returning assembly, perhaps a table? five columns: label mnem arg1 arg2 [arg3]
-* Determine format for tooltips; probably best to do lookups server-side, render them in html and control visibility with :hover
+* Improve aesthetic
+  - fix bunching of divs on assembly side
+  - fix line numbers on source side
+  - scale font size to screen width
+  - improve (begin) styling on tooltips
+* Improve backend assembly parsing: identify addressing modes, registers, mnemonics, labels
+  - make better regular expressions
+  - some harder parsing necessary for identifying labels (labels look just like mnemonics regex-wise; can appear as offset in indirect addressing or  follow jmp/call)
 * Parse DWARF format for debug info, specifically matching local variables to stack offsets, arguments to registers, etc.
 
 ## Limitations
