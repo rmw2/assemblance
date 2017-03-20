@@ -184,7 +184,8 @@ def process_asm(asm):
                 print('\tskipping')
                 continue
 
-        if
+        if len(tokens) > 1 and '.debug_info' in tokens[1]:
+            break
 
         # output line number
         markup += '<div class="asm-line">'
