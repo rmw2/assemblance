@@ -29,6 +29,7 @@
 
 	  	<!-- Navigation -->
 	  	<div class="col-sm-3" id="menu">
+	  		<a href="http://github.com/rmw2/Assemblance"><div class="menu-item"> github </div></a>
 	  		<a href={{ url_for('about') }}><div class="menu-item"> about </div></a>
 	  	</div>
 
@@ -47,9 +48,10 @@
 			</form>
 
 			<div id="source-code" class="content">
-				{% if srctext %} <pre>{{srctext|safe}}</pre>
+				{% if srctext %}
+					{{srctext|safe}}
 				{% else %} Source goes here.
-				{% endif%}
+				{% endif %}
 			</div>
 		</div>
 
@@ -63,7 +65,10 @@
 			</form>
 
 			<div id="asm-code" class="content">
-				{% block asm %} Assembly goes here. {% endblock %}
+				{% if asmtext %}
+					{{asmtext|safe}}
+				{% else %} Assembly goes here.
+				{% endif %}
 			</div>
 		</div><!-- /.container -->
 	</div>

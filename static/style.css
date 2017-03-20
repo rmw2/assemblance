@@ -1,11 +1,6 @@
 /* style.css */
 /* Author: Rob Whitaker */
 
-@font-face {
-    font-family: ostrich;
-    src: url('fonts/OstrichSans-Bold.otf');
-}
-
 body {
 	font-family: 'Josefin Sans', sans-serif;
 }
@@ -49,6 +44,25 @@ pre {
 	border-left: 1pt solid #FFF;
 }
 
+#asm-code {
+	display: table;
+}
+
+.asm-line {
+	padding: 2pt 0 2pt 0;
+	display: table-row;
+}
+
+.asm-token {
+	padding: 0 5pt 0 5pt;
+	display: table-cell;
+}
+
+.asm-no {
+	padding: 0 5pt 0 0;
+	display: table-cell;
+}
+
 #toolbar {
 	background-color: #66B9BF;
 	padding: 5pt;
@@ -70,6 +84,29 @@ pre {
 	padding: 10pt 5pt 10pt 5pt;
 }
 
+.asm-mnemonic {
+	position: relative;
+}
+
+.tt {
+	visibility: hidden;
+	position: absolute;
+	text-align: center;
+	padding: 5px;
+
+	background-color: rgba(0,0,0,0.75);
+	color: #FFF;
+	border-radius: 5px;
+
+	right: 105%;
+	top: 0;
+	z-index: 1;
+}
+
+.asm-mnemonic:hover .tt {
+	visibility: visible;
+}
+
 .flash {
 	border-radius: 10px;
 	padding: 5px;
@@ -79,6 +116,10 @@ pre {
 .content {
 	padding: 5pt;
 	font-family: Monospace;
+}
+
+.src-line {
+	white-space: pre;
 }
 
 .clear {
@@ -95,7 +136,7 @@ pre {
 }
 
 .menu-item:hover {
-	background-color: #333;
+	background-color: #07889B;
 }
 
 .label-header {
@@ -115,7 +156,7 @@ pre {
 }
 
 .label-button:hover {
-	background-color: #FDD;
+	background-color: #EEAA7B;
 }
 
 .inputfile {
@@ -125,4 +166,24 @@ pre {
 	overflow: hidden;
 	position: absolute;
 	z-index: -1;
+}
+
+.color-1 {
+	background-color: rgba(211, 248, 226, .8);
+}
+
+.color-2 {
+	background-color: rgba(228, 193, 249, .8);
+}
+
+.color-3 {
+	background-color: rgba(244, 146, 212, .8);
+}
+
+.color-4 {
+	background-color: rgba(237, 231, 177, .8);
+}
+
+.color-5 {
+	background-color: rgba(169, 222, 249, .8);
 }
