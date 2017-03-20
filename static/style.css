@@ -45,22 +45,7 @@ pre {
 }
 
 #asm-code {
-	display: table;
-}
-
-.asm-line {
-	padding: 2pt 0 2pt 0;
-	display: table-row;
-}
-
-.asm-token {
-	padding: 0 5pt 0 5pt;
-	display: table-cell;
-}
-
-.asm-no {
-	padding: 0 5pt 0 0;
-	display: table-cell;
+	display: block;
 }
 
 #toolbar {
@@ -84,19 +69,50 @@ pre {
 	padding: 10pt 5pt 10pt 5pt;
 }
 
+.asm-line {
+	padding: 2pt 0 2pt 0;
+	display: block;
+}
+
+.asm-token {
+	/*padding: 0 5pt 0 5pt;*/
+	display: inline-block;
+	width: 21%;
+}
+
+.asm-no {
+	padding: 0 5pt 0 0;
+	display: inline-block;
+	width: 6%;
+}
+
 .asm-mnemonic {
 	position: relative;
+}
+
+.token-text {
+	border-radius: 5px;
+	padding: 0 5pt 0 5pt;
+}
+
+.asm-mnemonic:hover .token-text {
+	background-color: #DDD;
 }
 
 .tt {
 	visibility: hidden;
 	position: absolute;
-	text-align: center;
-	padding: 5px;
+	text-align: left;
 
-	background-color: rgba(0,0,0,0.75);
-	color: #FFF;
+	width: 300px;
+	padding: 5px;
 	border-radius: 5px;
+
+	font-family: sans-serif;
+
+	background-color: rgba(0,0,0,0.9);
+	box-shadow: 3px 3px 2px #888;
+	color: #FFF;
 
 	right: 105%;
 	top: 0;
@@ -105,6 +121,41 @@ pre {
 
 .asm-mnemonic:hover .tt {
 	visibility: visible;
+}
+
+.c-no {
+	display: inline-block;
+}
+
+.tt-row {
+	display: block;
+}
+
+.tt-title {
+	font-weight: bold;
+	color: red;
+	display: inline-block;
+}
+
+.tt-syn {
+	font-style: italic;
+	display: inline-block;
+	float: right;
+}
+
+.tt-mnem {
+	font-style: normal;
+	font-family: Monospace;
+	display: inline-block;
+}
+
+.c-line {
+	display: inline-block;
+	white-space: pre;
+}
+
+.src-line {
+	display: block;
 }
 
 .flash {
@@ -116,10 +167,6 @@ pre {
 .content {
 	padding: 5pt;
 	font-family: Monospace;
-}
-
-.src-line {
-	white-space: pre;
 }
 
 .clear {
