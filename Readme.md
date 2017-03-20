@@ -8,24 +8,32 @@ A similar project developed by Matt Godbolt can be found at http://gcc.godbolt.c
 Special thanks to Bob Dondero for his advising during this project, and the x86-64 resources he developed for Princeton's COS217: Systems Programming.
 
 ## Progress
-* Boilerplate for uploading a file to the server
-* Render uploaded source file in template
-* Perform source-assembly line-matching on backend
-* Compiled dictionary of assembly mnemonics in static/ref.json
-* Assembly tokens parsed and each returned in a different div
-* Tooltips on mnemonics are functional (but ugly)
+* (3/9)  Compiled dictionary of assembly mnemonics in static/ref.json
+* (3/10) Boilerplate for uploading a file to the server
+* (3/11) Render uploaded source file in template
+* (3/11) Perform source-assembly line-matching on backend
+* (3/19) Assembly tokens parsed and each returned in a different div
+* (3/20) Tooltips on mnemonics are functional
   - All text generated on backend, visibility controlled via CSS
+  - Current formatting is acceptable, could be improved
+* (3/20) Line-matching is functional
+  - corresponding lines of c and asm are wrapped in divs of the same class
+* (3/20) Extraneous compiler-generated assembly labels and directives are ignored in output
 
 ## TODO
+* Bugs
+  - line matching is currently off by one
+  - assembly string literals are parsed as multiple tokens, can't simply split on whitespace
 * Improve aesthetic
   - fix bunching of divs on assembly side
   - fix line numbers on source side
   - scale font size to screen width
-  - improve (begin) styling on tooltips
+  - improve styling on tooltips
 * Improve backend assembly parsing: identify addressing modes, registers, mnemonics, labels
   - make better regular expressions
   - some harder parsing necessary for identifying labels (labels look just like mnemonics regex-wise; can appear as offset in indirect addressing or  follow jmp/call)
 * Parse DWARF format for debug info, specifically matching local variables to stack offsets, arguments to registers, etc.
+  - 
 
 ## Limitations
 * At this point the project will be restricted to the same subset of x86-64 used by Princeton's COS217.  Specifically this excludes floating point arithmetic and assumes that functions take no more than six arguments, and that structs are not passed as arguments.
