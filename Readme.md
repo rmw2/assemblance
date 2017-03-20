@@ -33,7 +33,6 @@ Special thanks to Bob Dondero for his advising during this project, and the x86-
   - make better regular expressions
   - some harder parsing necessary for identifying labels (labels look just like mnemonics regex-wise; can appear as offset in indirect addressing or  follow jmp/call)
 * Parse DWARF format for debug info, specifically matching local variables to stack offsets, arguments to registers, etc.
-  - 
 
 ## Limitations
 * At this point the project will be restricted to the same subset of x86-64 used by Princeton's COS217.  Specifically this excludes floating point arithmetic and assumes that functions take no more than six arguments, and that structs are not passed as arguments.
