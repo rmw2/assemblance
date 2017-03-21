@@ -178,7 +178,8 @@ pre {
 .flash {
 	border-radius: 10px;
 	padding: 5px;
-	color: #0FF;
+	color: #F00;
+	font-weight: bold;
 }
 
 .content {
