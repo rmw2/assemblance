@@ -10,7 +10,8 @@ from werkzeug.utils import secure_filename
 from parse import process_asm, format_c
 
 # standard packages
-import os, subprocess, elftools
+import os, subprocess
+from elftools.elf.elffile import ELFFile
 from uuid import uuid4
 
 # Intialize Application
@@ -42,7 +43,7 @@ def index():
     Issue-- this currently re-renders the entire template every time...
     """
     if 'uid' not in session:
-        session['uid'] = uuid4()
+        session['uid'] = str(uuid4())
     if 'src-markup' not in session:
         session['src-markup'] = 'source goes here'
     if 'asm-markup' not in session:
@@ -60,25 +61,37 @@ def index():
 
             # Save text of source file to uploads folder
             filename = secure_filename(file.filename)
-            filepath = os.path.join(UPLOADS_FOLDER, session['uid'])
-            file.save(os.path.join(filepath, filename))
+            prefix = os.path.join(UPLOADS_FOLDER, session['uid'])
+
+            # Create folder if necessary
+            if not os.path.isdir(prefix):
+                os.mkdir(prefix)
+
+            # Save to newly created folder
+            filepath = os.path.join(prefix, filename)
+            with open(filepath, 'w') as cfile:
+                cfile.write(''.join(session['src']))
+
+            # Locations for new files
+            sfilepath = os.path.join(prefix, filename[:-2] + '.s')
+            ofilepath = os.path.join(prefix, filename[:-2] + '.o')
 
             # Compile source to assembly
-            pres1 = subprocess.call([gcc, '-g', '-S', os.path.join(filepath, filename)])
+            pres1 = subprocess.call([gcc, '-g', '-S', filepath, '-o', sfilepath])
 
             # Compile source to ELF
-            pres2 = subprocess.call([gcc, '-g', '-c', os.path.join(filepath, filename)])
+            pres2 = subprocess.call([gcc, '-g', '-c', filepath, '-o', ofilepath])
 
             # Check for compilation errors
-            if pres1 != 0 or pres2 !=0:
-                flash('Compilation failed')
+            if pres1 != 0 or pres2 != 0:
+                flash('compilation failed')
                 return redirect(request.url)
 
             # Load assembly and ELF and process
-            with open(os.path.join(filepath, filename[:-2], '.s')) as sfile:
-                session['asm'] = [line.decode('UTF-8') for line in sfile.readlines()]
-            with open(os.path.join(filepath, filename[:-2], '.o')) as ofile:
-                session['elf'] = elftools.ELFFile(ofile)
+            with open(sfilepath, 'r') as sfile:
+                session['asm'] = [line for line in sfile.readlines()]
+            #with open(ofilepath, 'rb') as ofile:
+            #   session['elf'] = ELFFile(ofile).get_dwarf_info()
 
             # Process
             (session['asm-markup'], session['colors']) = process_asm(session['asm'])
