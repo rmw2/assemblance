@@ -391,7 +391,7 @@
 		"syn"	: "(no operands)",
 		"size"	: [],
 		"type"	: [],
-		"desc"	: "Return from current function.  That is, pop from the stasck to the instruction pointer, to return to the address from which the function was called.",
+		"desc"	: "Return from current function.  That is, pop from the stack to the instruction pointer, to return to the address from which the function was called.",
 		"flags"	: "None"
 	},
 
@@ -401,6 +401,123 @@
 		"size"	: [],
 		"type"	: [],
 		"desc"	: "Push the address of the next instruction onto the stack and jump to location specified by label.",
+		"flags"	: "None"
+	},
+
+	"jmp"	: {
+		"name"	: "Jump",
+		"syn"	: "label",
+		"size"	: [],
+		"type"	: [],
+		"desc"	: "Jump to the address specified by label, (overwrite the instruction pointer with the address of label).",
+		"flags"	: "None"
+	},
+
+	"je"		: {
+		"name"	: "Conditional Jump (Equal)",
+		"syn"	: "label",
+		"size"	: [],
+		"type"	: [],
+		"desc"	: "Jump to address specified by label iff the flags in the EFLAGS register indicate an equal to.",
+		"flags"	: "None"
+	},
+
+	"jne"	: {
+		"name"	: "Conditional Jump (Not Equal)",
+		"syn"	: "label",
+		"size"	: [],
+		"type"	: [],
+		"desc"	: "Jump to address specified by label iff the flags in the EFLAGS register indicate not equal to.",
+		"flags"	: "None"
+	},
+
+	"jl"	: {
+		"name"	: "Conditional Jump (Less than)",
+		"syn"	: "label",
+		"size"	: [],
+		"type"	: [],
+		"desc"	: "Jump to address specified by label iff the flags in the EFLAGS register indicate less than (signed numbers).",
+		"flags"	: "None"
+	},
+
+	"jle"	: {
+		"name"	: "Conditional Jump (Less than or Equal)",
+		"syn"	: "label",
+		"size"	: [],
+		"type"	: [],
+		"desc"	: "Jump to address specified by label iff the flags in the EFLAGS register indicate less than (signed numbers) or equal to.",
+		"flags"	: "None"
+	},
+
+	"jg"	: {
+		"name"	: "Conditional Jump (Greater than)",
+		"syn"	: "label",
+		"size"	: [],
+		"type"	: [],
+		"desc"	: "Jump to address specified by label iff the flags in the EFLAGS register indicate greater than (signed numbers).",
+		"flags"	: "None"
+	},
+
+	"jge"	: {
+		"name"	: "Conditional Jump (Greater than or Equal)",
+		"syn"	: "label",
+		"size"	: [],
+		"type"	: [],
+		"desc"	: "Jump to address specified by label iff the flags in the EFLAGS register indicate greater than or equal to (signed numbers).",
+		"flags"	: "None"
+	},
+
+	"jb"	: {
+		"name"	: "Conditional Jump (Below)",
+		"syn"	: "label",
+		"size"	: [],
+		"type"	: [],
+		"desc"	: "Jump to address specified by label iff the flags in the EFLAGS register indicate below (unsigned numbers).",
+		"flags"	: "None"
+	},
+
+	"jbe"	: {
+		"name"	: "Conditional Jump (Below or Equal)",
+		"syn"	: "label",
+		"size"	: [],
+		"type"	: [],
+		"desc"	: "Jump to address specified by label iff the flags in the EFLAGS register indicate below (unsigned numbers) or equal.",
+		"flags"	: "None"
+	},
+
+	"ja"	: {
+		"name"	: "Conditional Jump (Above)",
+		"syn"	: "label",
+		"size"	: [],
+		"type"	: [],
+		"desc"	: "Jump to address specified by label iff the flags in the EFLAGS register indicate above (unsigned numbers).",
+		"flags"	: "None"
+	},
+
+	"jae"	: {
+		"name"	: "Conditional Jump (Above or Equal)",
+		"syn"	: "label",
+		"size"	: [],
+		"type"	: [],
+		"desc"	: "Jump to address specified by label iff the flags in the EFLAGS register indicate above (unsigned numbers) or equal.",
+		"flags"	: "None"
+	},
+
+	"nop"	: {
+		"name"	: "No Operation",
+		"syn"	: "(no operands)",
+		"size"	: [],
+		"type"	: [],
+		"desc"	: "Do nothing for some specified number of clock cycles.",
+		"flags"	: "None"
+	},
+
+	"leave"	: {
+		"name"	: "Leave",
+		"syn"	: "(no operands)",
+		"size"	: [],
+		"type"	: [],
+		"desc"	: "Copy %rbp to %rsp and pop from the stack to %rbp, restoring the stack frame of the caller before returning.  This is the opposite of enter.",
 		"flags"	: "None"
 	}
 }

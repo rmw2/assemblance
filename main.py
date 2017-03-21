@@ -11,7 +11,6 @@ from parse import process_asm, format_c
 
 # Intialize Application
 app = Flask(__name__)
-UPLOAD_FOLDER = 'uploads/'
 ALLOWED_EXTENSIONS = set(['c', 's', 'o'])
 
 # Secret key to maintain sessions

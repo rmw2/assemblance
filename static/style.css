@@ -59,6 +59,10 @@ pre {
 	border-bottom: 2pt solid #FFF;
 }
 
+#main {
+	height: 100%;
+}
+
 #title {
 	padding: 10pt 5pt 10pt 5pt;
 	font-size: 24pt;
@@ -123,10 +127,6 @@ pre {
 	visibility: visible;
 }
 
-.c-no {
-	display: inline-block;
-}
-
 .tt-row {
 	display: block;
 }
@@ -160,12 +160,19 @@ pre {
 
 .c-line {
 	display: inline-block;
+	width: 90%;
 	white-space: pre;
+}
+
+.c-no {
+	display: inline-block;
+	width: 4%;
 }
 
 .src-line {
 	display: block;
 	overflow: hidden;
+	padding: 2pt 0 2pt 0;
 }
 
 .flash {

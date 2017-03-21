@@ -119,7 +119,7 @@ regexp = {
 #   'immediate' :   re.compile('\$' + symbol),
 #   'label'     :   re.compile(symbol + ':'),
 #   'section'   :   re.compile('\.' + symbol),
-    'mnemonic'  :   re.compile('[^.$%]?' + symbol +'[^:]?')
+    'mnemonic'  :   re.compile('(?<![.$%])' + symbol +'(?!:)')
 }
 
 # Handlers for different assembly tokens
@@ -131,6 +131,13 @@ handlers = {
     'mnemonic'  :   handle_mnemonic
 }
 
+
+"""
+Tokens available:
+    0   label, mnemonic, directive
+    1   label, immediate, register, addressing, directive
+"""
+
 #**********************************************************************
 # Main processing functions
 #**********************************************************************
@@ -139,57 +146,63 @@ def process_asm(asm):
     """ Process an entire assembly file asm, represented as a list
         of one string for each line.  Return a marked up version for
         rendering with jinja2 """
+
+    # Open markup with non colored block
     markup = '<div class="loc color-0">'
+    # Initialize dictionary of line numbers and colors
+    colors = {}
+
+    # Keep track of blocks and lines of assembly
     blocknum = 0
-    cnum = {}
+    asmline = 0
 
     # Iterate over each line
-    for i, line in enumerate(asm):
+    for line in asm:
         # first escape html tags
         line = line.replace('<', '&lt;').replace('>', '&gt;')
+        # convert tabs to spaces
+        line = line.replace('\t', ' '*4)
 
         # split into tokens
         tokens = line.strip().split()
 
         # handle formatting for special lines
         if tokens[0] == '.loc':
+            print('on block %d' % blocknum)
             # do line-matching
-            linum = int(tokens[2]) - 1
+            cline = int(tokens[2])
 
             # determine color-class of line
-            if linum not in cnum:
-                cnum[linum] = (blocknum % ncolors) + 1
+            if cline not in colors:
+                colors[cline] = (blocknum % ncolors) + 1
+                blocknum += 1
 
             # close previous div
-            blocknum += 1
             markup += '</div><!-- /.loc -->\n'
 
             # open new div of appropriate color class
-            markup += '<div class="loc color-{}">\n'.format(cnum[linum])
+            markup += '<div class="loc color-{}">\n'.format(colors[cline])
 
             # don't actually output the text of the line
             continue
 
         if tokens[0].startswith('.'):
-            print('%s starts with .' % tokens[0])
             # don't output non-essential directives
             if not tokens[0].endswith(':') and tokens[0] not in whitelist:
-                print('\tskipping...')
                 continue
 
         if tokens[0].endswith(':'):
-            print('%s ends with :' % tokens[0])
             # don't output debugging labels
             if badlabel.match(tokens[0]):
-                print('\tskipping')
                 continue
 
         if len(tokens) > 1 and '.debug_info' in tokens[1]:
             break
 
         # output line number
+        asmline += 1
         markup += '<div class="asm-line">'
-        markup += div.format(cl="asm-no", cx=i)
+        markup += div.format(cl="asm-no", cx=asmline)
 
         # handle formatting for general lines
         for token in tokens:
@@ -210,7 +223,7 @@ def process_asm(asm):
         markup += '</div>'
 
     markup += '</div><!-- /.loc -->'
-    return markup, cnum
+    return markup, colors
 
 def format_c(c, colors=[]):
     """ Take a list of lines of c code and generate the corresponding
@@ -222,17 +235,20 @@ def format_c(c, colors=[]):
     markup = ''
 
     for i, line in enumerate(c):
+        # 1-based line numbering
+        l = i+1
+
         # Content
         line = line.replace('<', '&lt;').replace('>', '&gt;')
         line = div.format(cl="c-line", cx=line)
         # Number
-        no = div.format(cl="c-no", cx=i)
+        no = div.format(cl="c-no", cx=l)
 
         cl = "src-line"
 
         # Add appropriate color class
-        if i in colors:
-            cl += " color-{}".format(colors[i])
+        if l in colors:
+            cl += " color-{}".format(colors[l])
 
         markup += div.format(cl=cl, cx=no+line)
 
