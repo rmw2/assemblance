@@ -9,9 +9,15 @@ from werkzeug.utils import secure_filename
 # project files
 from parse import process_asm, format_c
 
+# other packages
+import os, subprocess
+from uuid import uuid4
+
 # Intialize Application
 app = Flask(__name__)
 ALLOWED_EXTENSIONS = set(['c', 's', 'o'])
+UPLOADS_FOLDER = 'uploads'
+app.config['UPLOADS_FOLDER'] = UPLOADS_FOLDER
 
 # Secret key to maintain sessions
 app.secret_key = 'not so secret'
@@ -33,6 +39,9 @@ def index():
 
     Issue-- this currently re-renders the entire template every time...
     """
+    if 'uid' not in session:
+        session['uid'] = uuid4()
+
     if 'src-markup' not in session:
         session['src-markup'] = 'source goes here'
     if 'asm-markup' not in session:
@@ -47,13 +56,23 @@ def index():
             # Save text of source file to session object
             session['src'] = [line.decode('UTF-8') for line in file.readlines()]
             session['src-markup'] = format_c(session['src'])
-        elif 'asmfile' in request.files:
-            file = request.files['asmfile']
-            # Save assembly file to session
-            session['asm'] = [line.decode('UTF-8') for line in file.readlines()]
 
-            # Process assembly and generate markup
-            (session['asm-markup'], session['colors']) = process_asm(session['asm'])
+            # Save the text as a file in the uploads folder
+            filename = secure_filename(file.filename)
+            file.save(os.path.join(UPLOADS_FOLDER, session['uid'], filename))
+
+            # Compile assembly with debugging information
+            pres1 = subprocess.call()
+            # Compile ELF with DWARF tree
+            pres2 = subprocess.call()
+
+            if pres1 != 0 or pres2 != 0:
+                # Compilation error
+                flash('Compilation failed')
+                return redirect(request.url)
+
+            # Load assembly and object files
+
         else:
             return redirect(request.url)
 

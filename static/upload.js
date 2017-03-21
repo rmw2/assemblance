@@ -8,6 +8,7 @@
 $(document).ready( function readyFunction() {
 	$('.inputfile').change(function autoSubmit() {
 		$(this).parent().submit();
+		$("#asm-code").html('compiling...')
 	});
 });
 
