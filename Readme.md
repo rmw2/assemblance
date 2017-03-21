@@ -20,15 +20,16 @@ Special thanks to Bob Dondero for his advising during this project, and the x86-
   - corresponding lines of c and asm are wrapped in divs of the same class
 * (3/20) Extraneous compiler-generated assembly labels and directives are ignored in output
 * (3/21) Fixed line-matching bug and line numbering
+* (3/21) Moved compilation to server-side
+  - Now user only uploads source, both .s and .o files are generated on the server by gcc 4.8.1
+  - Eliminates session bug resulting from having to upload multiple files
 
 ## TODO
 * Bugs
   - assembly string literals are parsed as multiple tokens, can't simply split on whitespace
-* Improve aesthetic
-  - fix bunching of divs on assembly side
-  - fix line numbers on source side
+* Improve aesthetics
   - scale font size to screen width
-  - improve styling on tooltips
+  - add operand size and type to tooltips
 * Improve backend assembly parsing: identify addressing modes, registers, mnemonics, labels
   - make better regular expressions
   - handle first token differently from subsequent tokens for each line
