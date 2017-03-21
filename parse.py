@@ -115,7 +115,8 @@ symbol = '([a-zA-Z.][\w.]*)|(\"[\w\s.]+\")*'
 
 # Regular expressions for different assembly tokens
 regexp = {
-#   'register'  :   re.compile('%' + symbol),
+   'register'   :   re.compile('%\w\w\w?'),
+   'address'    :   re.compile('(\$[.\w]*)?\((%\w\w\w?)?,(%\w\w\w?)?(,($2,$4,$8))\)?'),
 #   'immediate' :   re.compile('\$' + symbol),
 #   'label'     :   re.compile(symbol + ':'),
 #   'section'   :   re.compile('\.' + symbol),
@@ -124,8 +125,8 @@ regexp = {
 
 # Handlers for different assembly tokens
 handlers = {
-#   'register'  :   handle_default,
-#   'immediate' :   handle_default,
+    'register'  :   handle_default,
+    'address'   :   handle_default,
 #   'label'     :   handle_default,
 #   'section'   :   handle_default,
     'mnemonic'  :   handle_mnemonic
@@ -146,6 +147,8 @@ def process_asm(asm):
     """ Process an entire assembly file asm, represented as a list
         of one string for each line.  Return a marked up version for
         rendering with jinja2 """
+
+    # TODO: REFACTOR THIS FUNCTION INTO MORE MANAGEABLE PIECES
 
     # Open markup with non colored block
     markup = '<div class="loc color-0">'
@@ -204,25 +207,39 @@ def process_asm(asm):
         markup += div.format(cl="asm-no", cx=asmline)
 
         # handle formatting for general lines
-        for token in tokens:
-            matched = False
-            for r in regexp:
-                cl = 'asm-token'
-                # check against each regular expression
-                if regexp[r].match(token):
-                    cl += ' asm-' + r
-                    markup += handlers[r](token, cl)
-                    matched = True
-                    break
+        markup += process_first_token(tokens[0])
 
-            # Default classing for unmatched tokens
-            if not matched:
-                markup += handle_default(token, 'asm-token')
+        for token in tokens[1:]:
+            markup += process_other_token(token)
 
         markup += '</div>'
 
     markup += '</div><!-- /.loc -->'
     return markup, colors
+
+def process_first_token(token):
+    """ Handle the markup for the first token in a line.
+    Can be a label, directive, or mnemonic.
+    """
+    if token.endswith(':'):
+        return handle_default(token, 'asm-token asm-label')
+    if token.startswith('.'):
+        return handle_default(token, 'asm-token asm-directive')
+
+    return handle_mnemonic(token, 'asm-token asm-mnemonic')
+
+def process_other_token(token):
+    """ Handle the markup for the subsequent tokens in a line.
+    Can be a directive, register, addressing mode, .
+    """
+    for r in regexp:
+        cl = 'asm-token'
+        # check against each regular expression
+        if regexp[r].match(token):
+            cl += ' asm-' + r
+            return handlers[r](token, cl)
+
+    return handle_default(token, 'asm-token')
 
 def format_c(c, colors=[]):
     """ Take a list of lines of c code and generate the corresponding

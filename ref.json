@@ -289,10 +289,10 @@
 
 	"imul"	: {
 		"name"	: "Multiply",
-		"syn"	: "dest",
+		"syn"	: "src dest",
 		"size"	: [],
-		"type"	: ["IRM", "R"],
-		"desc"	: "Decrement dest.",
+		"type"	: ["IRM", "RM"],
+		"desc"	: "Multiply src by dest and store the result in dest.",
 		"flags"	: "O, S, Z, A, C, P"
 	},
 

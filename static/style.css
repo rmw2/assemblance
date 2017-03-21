@@ -103,6 +103,23 @@ pre {
 	background-color: #DDD;
 }
 
+.token-text:hover {
+	background-color: #DDD;
+}
+
+.asm-mnemonic {
+	font-weight: bold;
+}
+
+.asm-label{
+	font-style: italic;
+	color: #333;
+}
+
+.asm-register {
+	color: red;
+}
+
 .tt {
 	visibility: hidden;
 	position: absolute;
