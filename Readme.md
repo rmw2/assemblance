@@ -19,10 +19,10 @@ Special thanks to Bob Dondero for his advising during this project, and the x86-
 * (3/20) Line-matching is functional
   - corresponding lines of c and asm are wrapped in divs of the same class
 * (3/20) Extraneous compiler-generated assembly labels and directives are ignored in output
+* (3/21) Fixed line-matching bug and line numbering
 
 ## TODO
 * Bugs
-  - line matching is currently off by one
   - assembly string literals are parsed as multiple tokens, can't simply split on whitespace
 * Improve aesthetic
   - fix bunching of divs on assembly side
@@ -31,7 +31,7 @@ Special thanks to Bob Dondero for his advising during this project, and the x86-
   - improve styling on tooltips
 * Improve backend assembly parsing: identify addressing modes, registers, mnemonics, labels
   - make better regular expressions
-  - some harder parsing necessary for identifying labels (labels look just like mnemonics regex-wise; can appear as offset in indirect addressing or  follow jmp/call)
+  - handle first token differently from subsequent tokens for each line
 * Parse DWARF format for debug info, specifically matching local variables to stack offsets, arguments to registers, etc.
 
 ## Limitations
