@@ -87,11 +87,11 @@ def index():
                 flash('compilation failed')
                 return redirect(request.url)
 
-            # Load assembly and ELF and process
+            # Load assembly and ELF
             with open(sfilepath, 'r') as sfile:
                 session['asm'] = [line for line in sfile.readlines()]
-            #with open(ofilepath, 'rb') as ofile:
-            #   session['elf'] = ELFFile(ofile).get_dwarf_info()
+            with open(ofilepath, 'rb') as ofile:
+                dwarf = ELFFile(ofile).get_dwarf_info()
 
             # Process
             (session['asm-markup'], session['colors']) = process_asm(session['asm'])

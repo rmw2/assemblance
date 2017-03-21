@@ -168,7 +168,6 @@ def process_asm(asm):
 
         # handle formatting for special lines
         if tokens[0] == '.loc':
-            print('on block %d' % blocknum)
             # do line-matching
             cline = int(tokens[2])
 
@@ -244,11 +243,13 @@ def format_c(c, colors=[]):
         # Number
         no = div.format(cl="c-no", cx=l)
 
-        cl = "src-line"
+        cl = "src-line loc color-"
 
         # Add appropriate color class
         if l in colors:
-            cl += " color-{}".format(colors[l])
+            cl += str(colors[l])
+        else:
+            cl += '0'
 
         markup += div.format(cl=cl, cx=no+line)
 

@@ -238,6 +238,11 @@ pre {
 	border-radius: 5px;
 }
 
+.color-0 {
+	background-color: #EFEFEF;
+	border-radius: 0;
+}
+
 .color-1 {
 	background-color: rgba(211, 248, 226, .8);
 }
