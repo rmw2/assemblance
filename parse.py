@@ -44,7 +44,7 @@ tooltip = """
             </span>
         </div>
         <div class="tt-row">
-            <span class="tt-desc"> {entry[desc]} </span>
+            <span class="tt-desc">{entry[desc]}</span>
         </div>
         <div class="tt-row">
             Flags affected:
@@ -110,6 +110,7 @@ def handle_default(token, cl):
 #**********************************************************************
 # Assembly regular expressions and token formatting handlers
 #**********************************************************************
+
 symbol = '([a-zA-Z.][\w.]*)|(\"[\w\s.]+\")*'
 
 # Regular expressions for different assembly tokens
@@ -126,7 +127,7 @@ handlers = {
 #   'register'  :   handle_default,
 #   'immediate' :   handle_default,
 #   'label'     :   handle_default,
-#   'sections'  :   handle_default,
+#   'section'   :   handle_default,
     'mnemonic'  :   handle_mnemonic
 }
 
@@ -138,7 +139,7 @@ def process_asm(asm):
     """ Process an entire assembly file asm, represented as a list
         of one string for each line.  Return a marked up version for
         rendering with jinja2 """
-    markup = ''
+    markup = '<div class="loc color-0">'
     blocknum = 0
     cnum = {}
 
@@ -153,7 +154,7 @@ def process_asm(asm):
         # handle formatting for special lines
         if tokens[0] == '.loc':
             # do line-matching
-            linum = int(tokens[2])
+            linum = int(tokens[2]) - 1
 
             # determine color-class of line
             if linum not in cnum:
@@ -161,8 +162,7 @@ def process_asm(asm):
 
             # close previous div
             blocknum += 1
-            if blocknum > 1:
-                markup += '</div><!-- /.loc -->\n'
+            markup += '</div><!-- /.loc -->\n'
 
             # open new div of appropriate color class
             markup += '<div class="loc color-{}">\n'.format(cnum[linum])

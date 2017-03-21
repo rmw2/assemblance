@@ -157,7 +157,7 @@
 		"syn"	: "src",
 		"size"	: [8],
 		"type"	: ["IRM"],
-		"desc"	: "Push quad src onto the stack.  Equivalent to \nsubq $8, %rsp\nmovq src (%rsp)",
+		"desc"	: "Push quad src onto the stack.  Equivalent to <br><div class='tt-code'>subq $8, %rsp<br>movq src (%rsp)</div>",
 		"flags"	: "None"
 	},
 
@@ -166,7 +166,7 @@
 		"syn"	: "src",
 		"size"	: [2],
 		"type"	: ["IRM"],
-		"desc"	: "Push word src onto the stack.  Equivalent to \nsubq $2, %rsp\nmovw src (%rsp)",
+		"desc"	: "Push word src onto the stack.  Equivalent to <br><div class='tt-code'>subq $2, %rsp<br>movw src (%rsp)</div>",
 		"flags"	: "None"
 	},
 
@@ -175,7 +175,7 @@
 		"syn"	: "src",
 		"size"	: [8],
 		"type"	: ["RM"],
-		"desc"	: "Pop quad from the stack into dest.  Equivalent to \nmovq (%rsp) dest\naddq $8, %rsp",
+		"desc"	: "Pop quad from the stack into dest.  Equivalent to <br><div class='tt-code'>movq (%rsp), dest<br>addq $8, %rsp</div>",
 		"flags"	: "None"
 	},
 
@@ -184,7 +184,7 @@
 		"syn"	: "src",
 		"size"	: [2],
 		"type"	: ["RM"],
-		"desc"	: "Pop word from the stack into dest.  Equivalent to \nmovw (%rsp) dest\naddq $2, %rsp",
+		"desc"	: "Pop word from the stack into dest.  Equivalent to <br><div class='tt-code'>movw (%rsp), dest<br>addq $2, %rsp</div>",
 		"flags"	: "None"
 	},
 
