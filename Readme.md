@@ -23,6 +23,12 @@ Special thanks to Bob Dondero for his advising during this project, and the x86-
 * (3/21) Moved compilation to server-side
   - Now user only uploads source, both .s and .o files are generated on the server by gcc 4.8.1
   - Eliminates session bug resulting from having to upload multiple files
+* (3/21) Added parsing and syntax highlighting for registers and labels
+  - Now can recognize mnemonics, registers, and labels.
+* (3/23) Began work on parsing debugging info
+  - Currently have a dicitonary of memory locations by funciton and their corresponding symbols, declaration lines, and types.  Unfortunately the memory location is still in an opaque format.  Trying to figure out exactly the relationship between these numbers and stack/base pointer offsets.
+* (3/23) Fixed tokenizing bug.
+* 
 
 ## TODO
 * Bugs
@@ -30,6 +36,7 @@ Special thanks to Bob Dondero for his advising during this project, and the x86-
 * Improve aesthetics
   - scale font size to screen width
   - add operand size and type to tooltips
+  - give option to align bits of assembly with the corresponding bit of c, and add independent scrolling to the C/asm panels
 * Improve backend assembly parsing: identify addressing modes, registers, mnemonics, labels
   - make better regular expressions
   - handle first token differently from subsequent tokens for each line

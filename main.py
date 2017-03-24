@@ -16,7 +16,7 @@ from uuid import uuid4
 
 # Intialize Application
 app = Flask(__name__)
-ALLOWED_EXTENSIONS = set(['c', 's', 'o'])
+ALLOWED_EXTENSIONS = ['c']
 UPLOADS_FOLDER = 'uploads'
 app.config['UPLOADS_FOLDER'] = UPLOADS_FOLDER
 

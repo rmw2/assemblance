@@ -28,7 +28,7 @@ whitelist = ['.section', '.globl', '.byte', '.word', \
         '.long', '.quad', '.type', '.asciz', '.string', '.skip']
 
 # Disallowed labels
-badlabel = re.compile('((.LF)|(.LC)|(.Ltemp)|(.Ltext)).*')
+badlabel = re.compile('((.LF)|(.Ltemp)|(.Ltext)).*')
 
 #**********************************************************************
 # Markup format strings
@@ -116,11 +116,10 @@ symbol = '([a-zA-Z.][\w.]*)|(\"[\w\s.]+\")*'
 # Regular expressions for different assembly tokens
 regexp = {
    'register'   :   re.compile('%\w\w\w?'),
-   'address'    :   re.compile('(\$[.\w]*)?\((%\w\w\w?)?,(%\w\w\w?)?(,($2,$4,$8))\)?'),
+   'address'    :   re.compile('(\$[.\w]*)?\((%\w\w\w?)?,(%\w\w\w?)?(,($2,$4,$8))\)?')
 #   'immediate' :   re.compile('\$' + symbol),
 #   'label'     :   re.compile(symbol + ':'),
 #   'section'   :   re.compile('\.' + symbol),
-    'mnemonic'  :   re.compile('(?<![.$%])' + symbol +'(?!:)')
 }
 
 # Handlers for different assembly tokens
@@ -136,7 +135,7 @@ handlers = {
 """
 Tokens available:
     0   label, mnemonic, directive
-    1   label, immediate, register, addressing, directive
+    1-3 label, immediate, register, addressing, directive
 """
 
 #**********************************************************************
@@ -167,7 +166,7 @@ def process_asm(asm):
         line = line.replace('\t', ' '*4)
 
         # split into tokens
-        tokens = line.strip().split()
+        tokens = tokenize(line)
 
         # handle formatting for special lines
         if tokens[0] == '.loc':
@@ -216,6 +215,31 @@ def process_asm(asm):
 
     markup += '</div><!-- /.loc -->'
     return markup, colors
+
+def tokenize(line):
+    """ Take a ilne of assembly as a string and return a list of
+    the assembly language tokens that it contains.
+    """
+
+    # Remove leading and trailing spaces
+    line = line.strip()
+
+    # If no quotes, split on spaces
+    if '"' not in line:
+        return line.split()
+
+    # Process quotes and tokens separately
+    tokens = []
+    quote = '"{}"'
+    for i, bit in enumerate(line.split('"')):
+        if i % 2 == 0:
+            # Outside quote
+            tokens += bit.split()
+        else:
+            # Inside quote
+            tokens.append(quote.format(bit))
+
+    return tokens
 
 def process_first_token(token):
     """ Handle the markup for the first token in a line.

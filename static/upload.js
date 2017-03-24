@@ -7,8 +7,10 @@
 
 $(document).ready( function readyFunction() {
 	$('.inputfile').change(function autoSubmit() {
+		// Flash "compiling..." message while server-side runs
+		$('#asm-code').html('<div id="compiling">compiling...</div>');
+		// Auto submit on file select
 		$(this).parent().submit();
-		$('#asm-code').text('compiling...');
 	});
 });
 
