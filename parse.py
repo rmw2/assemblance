@@ -284,13 +284,11 @@ def format_c(c, colors=[]):
         # Number
         no = div.format(cl="c-no", cx=l)
 
-        cl = "src-line loc color-"
+        cl = "src-line"
 
         # Add appropriate color class
         if l in colors:
-            cl += str(colors[l])
-        else:
-            cl += '0'
+            cl += " loc color-" + str(colors[l])
 
         markup += div.format(cl=cl, cx=no+line)
 

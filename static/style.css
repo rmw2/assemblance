@@ -91,15 +91,20 @@ pre {
 .content {
 	padding: 5pt;
 	font-family: Monospace;
-	/* child of #asm and #source */
+
+	/* relative to parents .col-sm-6 */
 	height: 89%;
-/*	overflow-x: visible;
-	overflow-y: scroll;*/
+
+	/* adding a scrollbar clips tooltips,
+	they must be positioned on their own */
+	overflow-x: hidden;
+	overflow-y: scroll;
 }
 
-.asm-line {
-	padding: 2pt 0 2pt 0;
+.asm-line, .src-line {
+	padding: 2pt 5pt 2pt 5pt;
 	display: block;
+	overflow: hidden;
 }
 
 .asm-token {
@@ -203,12 +208,6 @@ pre {
 	width: 4%;
 }
 
-.src-line {
-	display: block;
-	overflow: hidden;
-	padding: 2pt 0 2pt 0;
-}
-
 .flash {
 	border-radius: 10px;
 	padding: 5px;
@@ -263,7 +262,6 @@ pre {
 }
 
 .loc {
-	padding: 0 5px 0 5px;
 	border-radius: 5px;
 }
 
