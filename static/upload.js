@@ -6,12 +6,29 @@
  *********************************************************************/
 
 $(document).ready( function readyFunction() {
+	// Handle file uploads
 	$('.inputfile').change(function autoSubmit() {
 		// Flash "compiling..." message while server-side runs
 		$('#asm-code').html('<div id="compiling">compiling...</div>');
 		// Auto submit on file select
 		$(this).parent().submit();
 	});
+
+	// Handle alignment of corresponding divs
+	$('div[id^="c-line-"]').on("click", function align() {
+		// get line number from end of id attribute
+		var n = $(this).attr("id").split("-").pop();
+
+		// select the corresponding element
+		var match = "#for-line-" + n;
+
+		// find out top position of matched element
+
+		// set scrollTop on parent to position of matched element
+
+	});
+
+
 });
 
 

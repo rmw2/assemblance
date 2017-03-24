@@ -55,12 +55,12 @@ tooltip = """
 
 # Format string for a classed div
 div = """
-    <div class="{cl}">{cx}</div>
+    <div id="{d}" class="{cl}">{cx}</div>
 """
 
 # Format string for a classed span
 span = """
-    <span class="{cl}">{cx}</span>
+    <span id="{d}" class="{cl}">{cx}</span>
 """
 
 #**********************************************************************
@@ -99,13 +99,13 @@ def handle_mnemonic(token, cl):
     cx = token_wrapped + tooltip.format(mnem=token, entry=entry)
 
     # Wrap in div and return
-    return div.format(cl="asm-mnemonic asm-token", cx=cx)
+    return div.format(d="", cl="asm-mnemonic asm-token", cx=cx)
 
 def handle_default(token, cl):
     """ Process an token in assembly and return the default formatting.
     """
     inner = span.format(cl="token-text", cx=token)
-    return div.format(cl=cl, cx=inner)
+    return div.format(d="", cl=cl, cx=inner)
 
 #**********************************************************************
 # Assembly regular expressions and token formatting handlers
@@ -150,7 +150,7 @@ def process_asm(asm):
     # TODO: REFACTOR THIS FUNCTION INTO MORE MANAGEABLE PIECES
 
     # Open markup with non colored block
-    markup = '<div class="loc color-0">'
+    markup = '<div class="asm-header">'
     # Initialize dictionary of line numbers and colors
     colors = {}
 
@@ -182,7 +182,8 @@ def process_asm(asm):
             markup += '</div><!-- /.loc -->\n'
 
             # open new div of appropriate color class
-            markup += '<div class="loc color-{}">\n'.format(colors[cline])
+            markup += '''<div id="for-line-{}" class="loc color-{}">
+            '''.format(cline, colors[cline])
 
             # don't actually output the text of the line
             continue
@@ -203,7 +204,7 @@ def process_asm(asm):
         # output line number
         asmline += 1
         markup += '<div class="asm-line">'
-        markup += div.format(cl="asm-no", cx=asmline)
+        markup += div.format(d="asm-line-"+str(asmline), cl="asm-no", cx=asmline)
 
         # handle formatting for general lines
         markup += process_first_token(tokens[0])
@@ -280,9 +281,9 @@ def format_c(c, colors=[]):
 
         # Content
         line = line.replace('<', '&lt;').replace('>', '&gt;')
-        line = div.format(cl="c-line", cx=line)
+        line = div.format(d="c-line-"+str(l), cl="c-line", cx=line)
         # Number
-        no = div.format(cl="c-no", cx=l)
+        no = div.format(d="", cl="c-no", cx=l)
 
         cl = "src-line"
 
@@ -290,6 +291,6 @@ def format_c(c, colors=[]):
         if l in colors:
             cl += " loc color-" + str(colors[l])
 
-        markup += div.format(cl=cl, cx=no+line)
+        markup += div.format(d="", cl=cl, cx=no+line)
 
     return markup
