@@ -27,12 +27,16 @@ pre {
 	overflow: hidden;
 }
 
+#page {
+	position: absolute;
+}
+
 #source {
 	background-color: #DDD;
 	padding: 10pt;
 	color: #000;
 	width: 50%;
-	height: 100%;
+	height: 89%;
 	border-right: 1pt solid #FFF;
 }
 
@@ -40,7 +44,7 @@ pre {
 	background-color: #EFEFEF;
 	padding: 10pt;
 	width: 50%;
-	height: 100%;
+	height: 89%;
 	border-left: 1pt solid #FFF;
 }
 
@@ -48,15 +52,11 @@ pre {
 	display: block;
 }
 
-#toolbar {
-	background-color: #66B9BF;
-	padding: 5pt;
-	height: 40pt;
-}
-
 #top {
 	background-color: #66B9BF;
 	border-bottom: 2pt solid #FFF;
+	/* child of .container */
+	height: 11%;
 }
 
 #main {
@@ -81,6 +81,20 @@ pre {
 	padding: 48pt 0 48pt 0;
 	text-align: center;
 	background-color: #DDD;
+}
+
+.tools {
+	/* child of #asm and #source */
+	height: 11%;
+}
+
+.content {
+	padding: 5pt;
+	font-family: Monospace;
+	/* child of #asm and #source */
+	height: 89%;
+/*	overflow-x: visible;
+	overflow-y: scroll;*/
 }
 
 .asm-line {
@@ -200,11 +214,6 @@ pre {
 	padding: 5px;
 	color: #F00;
 	font-weight: bold;
-}
-
-.content {
-	padding: 5pt;
-	font-family: Monospace;
 }
 
 .clear {

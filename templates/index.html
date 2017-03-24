@@ -12,7 +12,7 @@
 </head>
 <body>
 
-<div class="container">
+<div id="page" class="container">
 	<!-- Toolbar / control area -->
 	<div class="row" id="top">
 		<!-- Title area -->
@@ -40,12 +40,14 @@
 	<div class="row" id="main">
 		<!-- left column of the page -->
 		<div class="col-sm-6" id="source">
+			<div class="tools">
 			<form method="post" enctype="multipart/form-data">
 				<span class="label-header"> source </span>
-				<input type="file" class="inputfile" id="upload-src" name="srcfile"></button>
+				<input type="file" class="inputfile" id="upload-src" name="srcfile">
 				<label class="label-button" for="upload-src"> upload file </label>
 				<div class="clear"></div>
 			</form>
+			</div>
 
 			<div id="source-code" class="content">
 				{% if srctext %}
@@ -57,12 +59,14 @@
 
 		<!-- right column of the page -->
 		<div class="col-sm-6" id="asm">
+			<div class="tools">
 			<!--<form method="post" enctype="multipart/form-data">-->
 				<span class="label-header"> assembly </span>
 			<!--	<input type="file" class="inputfile" id="upload-asm" name="asmfile" ></button> -->
 			<!--	<label class="label-button" for="upload-asm"> upload file </label> -->
 				<div class="clear"></div>
 			<!--</form>-->
+			</div>
 
 			<div id="asm-code" class="content">
 				{% if asmtext %}
