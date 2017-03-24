@@ -97,8 +97,8 @@ pre {
 
 	/* adding a scrollbar clips tooltips,
 	they must be positioned on their own */
-	overflow-x: hidden;
-	overflow-y: scroll;
+	/*overflow-x: hidden;
+	overflow-y: scroll;*/
 }
 
 .asm-line, .src-line {
