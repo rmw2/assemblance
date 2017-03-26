@@ -5,6 +5,8 @@
  * Handle the file selection aspects of the application
  *********************************************************************/
 
+var hoverbg = "#DDD";
+
 $(document).ready( function readyFunction() {
 	// Handle file uploads
 	$('.inputfile').change(function autoSubmit() {
@@ -20,14 +22,24 @@ $(document).ready( function readyFunction() {
 		var n = $(this).attr("id").split("-").pop();
 
 		// select the corresponding element
-		var match = "#for-line-" + n;
+		var match = $("#for-line-" + n);
 
 		// find out top position of matched element
+		match.scrollTop($(this).scrollTop())
 
 		// set scrollTop on parent to position of matched element
 
 	});
 
+	// Handle corresponding highlights for mouse-overs
+	$('.asm-label').on("hover", function hoverLabel() {
+		var val = $(this).text();
+
+		// Select labels again and filter those with the same name
+		$('.asm-label')
+			.filter(TEXT = VAL)
+			.css("background-color", hoverbg); // not right
+	});
 
 });
 

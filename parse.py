@@ -60,7 +60,7 @@ div = """
 
 # Format string for a classed span
 span = """
-    <span id="{d}" class="{cl}">{cx}</span>
+    <span class="{cl}">{cx}</span>
 """
 
 #**********************************************************************

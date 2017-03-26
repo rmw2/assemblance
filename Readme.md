@@ -28,7 +28,7 @@ Special thanks to Bob Dondero for his advising during this project, and the x86-
 * (3/23) Began work on parsing debugging info
   - Currently have a dicitonary of memory locations by funciton and their corresponding symbols, declaration lines, and types.  Unfortunately the memory location is still in an opaque format.  Trying to figure out exactly the relationship between these numbers and stack/base pointer offsets.
 * (3/23) Fixed tokenizing bug.
-* 
+
 
 ## TODO
 * Bugs

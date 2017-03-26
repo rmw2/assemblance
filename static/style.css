@@ -27,10 +27,6 @@ pre {
 	overflow: hidden;
 }
 
-#page {
-	position: absolute;
-}
-
 #source {
 	background-color: #DDD;
 	padding: 10pt;
@@ -104,6 +100,9 @@ pre {
 .asm-line, .src-line {
 	padding: 2pt 5pt 2pt 5pt;
 	display: block;
+}
+
+.src-line {
 	overflow: hidden;
 }
 
@@ -126,6 +125,7 @@ pre {
 
 .token-text {
 	border-radius: 5px;
+	white-space: nowrap;
 	padding: 0 5pt 0 5pt;
 }
 
@@ -263,6 +263,7 @@ pre {
 
 .loc {
 	border-radius: 5px;
+	cursor: pointer;
 }
 
 .color-1 {
