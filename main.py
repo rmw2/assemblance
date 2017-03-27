@@ -8,9 +8,10 @@ from werkzeug.utils import secure_filename
 
 # project files
 from parse import process_asm, format_c
+from elf import find_variables
 
 # standard packages
-import os, subprocess
+import os, subprocess, shutil
 from elftools.elf.elffile import ELFFile
 from uuid import uuid4
 
@@ -92,7 +93,7 @@ def index():
             with open(sfilepath, 'r') as sfile:
                 session['asm'] = [line for line in sfile.readlines()]
             with open(ofilepath, 'rb') as ofile:
-                dwarf = ELFFile(ofile).get_dwarf_info()
+                locs, _ = find_variables(ofile)
 
             # Process
             (session['asm-markup'], session['colors']) = process_asm(session['asm'])
@@ -109,3 +110,10 @@ def about():
     """ Serve the static about page.
     """
     return "It's some good stuff.  By Rob Whitaker."
+
+def clean(uid):
+    """ Cleanup the server after a session.
+    """
+    if uid in os.listdir('uploads'):
+        shutil.rmtree(os.path.join('uploads', uid))
+

@@ -27,12 +27,19 @@ Special thanks to Bob Dondero for his advising during this project, and the x86-
   - Now can recognize mnemonics, registers, and labels.
 * (3/23) Began work on parsing debugging info
   - Currently have a dicitonary of memory locations by funciton and their corresponding symbols, declaration lines, and types.  Unfortunately the memory location is still in an opaque format.  Trying to figure out exactly the relationship between these numbers and stack/base pointer offsets.
-* (3/23) Fixed tokenizing bug.
-* 
+* (3/23) Fixed tokenizing bug with quotes and whitespace
+* (3/25) Started branch for more advanced animations/interactions with javascript
+  - Added scrollbars to each panel
+  - Working on horizontally aligning lines of C with corresponding blocks of assembly, to be triggered by a click event
+  - Broke tooltip popups, need to re-style them
+* (3/27) Can successfully determine locations of variables stored on the stack and in registers
+  - Markup not yet completed / matching not visible browser side
 
 ## TODO
-* Bugs
-  - assembly string literals are parsed as multiple tokens, can't simply split on whitespace
+* Finish variable name / memory address correspondance
+  - Add lookup to memory location dictionary to token markup
+  - Add another hover-enabled tooltip with symbol, type, and declaration line
+  - Highlight declaration line in source on hover (with javascript, somehow encode declaration line in attributes for token? data-decl-line=$LINE)
 * Improve aesthetics
   - scale font size to screen width
   - add operand size and type to tooltips
