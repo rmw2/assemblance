@@ -41,48 +41,13 @@ $(document).ready( function readyFunction() {
 	});
 
 	// Handle alignment of corresponding divs
-	$('div[id^="src-line-"]').click( function align() {
-		// get line number from end of id attribute
-		var n = $(this).attr("id").split("-").pop();
+	$('div[id^="src-line-"]').click(
+		align("#for-line-", "#source-code", "#asm-code")
+	);
+	$('div[id^="for-line-"]').click(
+		align("#src-line-", "#asm-code", "#source-code")
+	);
 
-		// select the corresponding element
-		var $match = $("#for-line-" + n);
-
-		// calculate current position of c line relative to corresponding block
-		var rel = $match.position().top - $(this).position().top;
-		// incorporate current value of scrollTop to get new scroll
-		var scroll = $("#asm-code").scrollTop() + rel;
-
-		// scroll to new position, animate over half second
-		$("#asm-code").animate({
-			scrollTop: scroll
-		}, 500);
-
-		highlight($(this));
-		highlight($match);
-	});
-
-		// Handle alignment of corresponding divs
-	$('div[id^="for-line-"]').click( function align() {
-		// get line number from end of id attribute
-		var n = $(this).attr("id").split("-").pop();
-
-		// select the corresponding element
-		var $match = $("#src-line-" + n);
-
-		// calculate current position of c line relative to corresponding block
-		var rel = $match.position().top - $(this).position().top;
-		// incorporate current value of scrollTop to get new scroll
-		var scroll = $("#source-code").scrollTop() + rel;
-
-		// scroll to new position, animate over half second
-		$("#source-code").animate({
-			scrollTop: scroll
-		}, 500);
-
-		highlight($(this));
-		highlight($match);
-	});
 
 	// Handle corresponding highlights for mouse-overs
 	$('.asm-label').hover(
@@ -108,61 +73,48 @@ $(document).ready( function readyFunction() {
 	});
 });
 
-function highlight($el) {
-	// Add border
-	$el.css('border', 'solid 3px black');
-	// Remove border
-	$el.animate({
-		'border-width' : 0
-	}, 1000);
+function align(id, fromBox, toBox) {
+	return function() {
+		// get line number from end of id attribute
+		var n = $(this).attr("id").split("-").pop();
+
+		// select the corresponding element
+		var $match = $(id + n);
+		var toTop = $match.position().top;
+		var fromTop = $(this).position().top;
+
+		// Make sure top of selected assembly block is in the frame
+		if (fromTop < 0) {
+			$(fromBox).animate({
+				scrollTop: $(fromBox).scrollTop() + fromTop
+			});
+
+			fromTop = 0;
+		}
+		// Make sure bottom of assembly block is in the frame
+		else if (fromTop + $(this).height() > $(fromBox).height()) {
+			$(fromBox).animate({
+				scrollTop: $(fromBox).scrollTop() + (fromTop + $(this).height() - $(fromBox).height())
+			});
+
+			fromTop = $(fromBox).height() - $(this).height();
+		}
+
+		// calculate current position of c line relative to corresponding block
+		var rel = toTop - fromTop;
+
+		// incorporate current value of scrollTop to get new scroll
+		var scroll = $(toBox).scrollTop() + rel;
+
+		// highlight clicked element and match, scroll to new position
+		highlight($(this));
+		$(toBox).animate( { scrollTop: scroll }, 500);
+		highlight($match);
+	}
 }
 
-// 	var cReader, sReader;
-
-// 	if (window.File && window.FileReader) {
-// 	    // Great success! All the File APIs are supported.
-
-// 	    // Reader for source
-// 	    cReader = new FileReader();
-// 	    cReader.onload = function readerLoad(evt) {
-// 			var src = evt.target.result;
-// 			// Process source for display
-// 			// allow tags to shine through
-// 			src = src.replace(/</g, '&lt;');
-// 			src = src.replace(/>/g, '&gt;');;
-// 			console.log(src);
-// 			$("#source-code")
-// 				.html(src);
-// 				.css('white-space', 'pre');
-// 		};
-
-// 		// Reader for assembly
-// 		sReader = new FileReader();
-// 		sReader.onload = function readerLoad(evt) {
-// 			var asm = evt.target.result;
-// 			asm = asm.replace('\n','<br>');
-// 			$("#asm-code").html(asm);
-// 		};
-// 	} else {
-// 	    alert('The File APIs are not fully supported in this browser.');
-// 	}
-
-// 	$("#upload").on("change", function handleUpload(evt) {
-// 		// Grab files from uploader
-// 		var files = evt.target.files;
-// 		console.log('Files found\n' );
-
-// 	    // Loop through the FileList
-// 	    for (var i = 0, f; f = files[i]; i++) {
-// 		    // Only process .c and .s file
-// 			if (f.name.match('.*\.c')) {
-// 				cReader.readAsText(f);
-// 			} else if (f.name.match('.*\.s')) {
-// 				sReader.readAsText(f);
-// 			} else {
-// 				alert('Unrecognized filetype');
-// 				continue;
-// 			}
-// 	    }
-// 	});
-// });
+function highlight($el) {
+	// Add and remove border
+	$el.css('border', 'solid 1px black');
+	$el.animate( { 'border-width' : 0 }, 1000);
+}

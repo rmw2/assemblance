@@ -46,6 +46,17 @@ pre {
 
 #asm-code {
 	display: block;
+	border: solid 1px #DDD;
+
+	mask-image: -webkit-gradient(linear, top, bottom,
+		color-stop(0.00,  rgba(0,0,0,1)),
+		color-stop(0.95,  rgba(0,0,0,1)),
+		color-stop(1.00,  rgba(0,0,0,0)));
+}
+
+
+#source-code {
+	border: solid 1px #EFEFEF;
 }
 
 #top {
@@ -82,6 +93,7 @@ pre {
 
 .content {
 	padding: 5pt;
+	border-radius: 5px;
 	font-family: Monospace;
 
 	/* relative to parents .col-sm-6 */
@@ -89,8 +101,8 @@ pre {
 
 	/* adding a scrollbar clips tooltips,
 	they must be positioned on their own */
-	/*overflow-x: hidden;
-	overflow-y: scroll;*/
+	overflow-x: hidden;
+	overflow-y: scroll;
 }
 
 .asm-line, .src-line {
