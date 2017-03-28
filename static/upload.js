@@ -15,7 +15,7 @@ $(document).ready( function readyFunction() {
 	});
 
 	// Handle relative positioning of tooltips on hover
-	$('.asm-mnemonic').mouseover( function tt_hover() {
+	$('.asm-mnemonic').mouseover( function tooltip() {
 		// Get current item and relatively positioned wrapper
 		var $item = $(this),
 			$tooltip = $("> .tt", $item),
@@ -38,46 +38,50 @@ $(document).ready( function readyFunction() {
 	     	'top': 		top,
 	    	'left': 	left
 	    });
-
-	   	console.log($tooltip.position().left + ', ' + $tooltip.position().top);
 	});
 
 	// Handle alignment of corresponding divs
-	$('div[id^="c-line-"]').on("click", function align() {
+	$('div[id^="c-line-"]').click( function align() {
 		// get line number from end of id attribute
 		var n = $(this).attr("id").split("-").pop();
 
 		// select the corresponding element
-		var match = $("#for-line-" + n);
+		var $match = $("#for-line-" + n);
 
-		// find out top position of matched element
-		match.scrollTop($(this).scrollTop())
+		// calculate current position of c line relative to corresponding block
+		var rel = $match.position().top - $(this).position().top;
+		// incorporate current value of scrollTop to get new scroll
+		var scroll = $("#asm-code").scrollTop() + rel;
 
-		// set scrollTop on parent to position of matched element
-
+		// set scroll of #asm-code to align divs
+		$("#asm-code").scrollTop(scroll);
 	});
 
 	// Handle corresponding highlights for mouse-overs
-	$('.asm-label').hover( function mouseIn() {
-		var hoverbg = "#DDD",
-			val = $(this).text().replace(':','');
+	$('.asm-label').hover(
 
-		// Select all tokens and filter those containing the label
-		$('.token-text').filter( function matchText(i, el) {
-			return $(el).text().includes(val)
-		}).css("background-color", hoverbg);
+		function mouseIn() {
+			var hoverbg = "#DDD",
+				val = $(this).text().replace(':','');
 
-	}, function mouseOut() {
-		var val = $(this).text().replace(':','');
-		// Select labels again and filter those with the same name
-		$('.token-text').filter( function matchText(i, el) {
-			return $(el).text().includes(val)
-		}).css("background-color", "inherit");
+			// Select all tokens and filter those containing the label
+			$('.token-text').filter( function matchText(i, el) {
+				return $(el).text().includes(val);
+			}).css("background-color", hoverbg);
+		},
+
+		function mouseOut() {
+			var val = $(this).text().replace(':','');
+
+			// Select labels again and filter those with the same name
+			$('.token-text').filter( function matchText(i, el) {
+				return $(el).text().includes(val);
+			}).css("background-color", "inherit");
+
 	});
 });
 
 
-// $(document).ready( function readyFunction() {
 // 	var cReader, sReader;
 
 // 	if (window.File && window.FileReader) {
