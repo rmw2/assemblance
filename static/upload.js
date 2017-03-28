@@ -41,7 +41,7 @@ $(document).ready( function readyFunction() {
 	});
 
 	// Handle alignment of corresponding divs
-	$('div[id^="c-line-"]').click( function align() {
+	$('div[id^="src-line-"]').click( function align() {
 		// get line number from end of id attribute
 		var n = $(this).attr("id").split("-").pop();
 
@@ -53,8 +53,35 @@ $(document).ready( function readyFunction() {
 		// incorporate current value of scrollTop to get new scroll
 		var scroll = $("#asm-code").scrollTop() + rel;
 
-		// set scroll of #asm-code to align divs
-		$("#asm-code").scrollTop(scroll);
+		// scroll to new position, animate over half second
+		$("#asm-code").animate({
+			scrollTop: scroll
+		}, 500);
+
+		highlight($(this));
+		highlight($match);
+	});
+
+		// Handle alignment of corresponding divs
+	$('div[id^="for-line-"]').click( function align() {
+		// get line number from end of id attribute
+		var n = $(this).attr("id").split("-").pop();
+
+		// select the corresponding element
+		var $match = $("#src-line-" + n);
+
+		// calculate current position of c line relative to corresponding block
+		var rel = $match.position().top - $(this).position().top;
+		// incorporate current value of scrollTop to get new scroll
+		var scroll = $("#source-code").scrollTop() + rel;
+
+		// scroll to new position, animate over half second
+		$("#source-code").animate({
+			scrollTop: scroll
+		}, 500);
+
+		highlight($(this));
+		highlight($match);
 	});
 
 	// Handle corresponding highlights for mouse-overs
@@ -81,6 +108,14 @@ $(document).ready( function readyFunction() {
 	});
 });
 
+function highlight($el) {
+	// Add border
+	$el.css('border', 'solid 3px black');
+	// Remove border
+	$el.animate({
+		'border-width' : 0
+	}, 1000);
+}
 
 // 	var cReader, sReader;
 

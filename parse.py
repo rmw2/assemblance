@@ -291,6 +291,6 @@ def format_c(c, colors=[]):
         if l in colors:
             cl += " loc color-" + str(colors[l])
 
-        markup += div.format(d="", cl=cl, cx=no+line)
+        markup += div.format(d="src-line-"+str(l), cl=cl, cx=no+line)
 
     return markup
