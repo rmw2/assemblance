@@ -25,13 +25,13 @@ $(document).ready( function readyFunction() {
 		var top = pos.top,
 			left = pos.left;
 
-		console.log('Left: ' + left);
-		console.log('Top:  ' + top);
-
-		// Require that tooltip render in window
+		// Require that tooltip render in window (vertical alignment)
 		if (top + $tooltip.height() > $("#asm-code").height()) {
 			top = $("#asm-code").height() - $tooltip.height();
 		}
+
+		// Align horizontally
+		left = left - $tooltip.width() - $item.width() / 2;
 
 		// Set position of tooltip
 	    $tooltip.css({
