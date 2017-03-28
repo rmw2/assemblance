@@ -55,10 +55,6 @@ pre {
 	height: 11%;
 }
 
-#main {
-	height: 100%;
-}
-
 #title {
 	padding: 10pt 5pt 10pt 5pt;
 	font-size: 24pt;
@@ -119,7 +115,6 @@ pre {
 }
 
 .asm-mnemonic {
-	position: relative;
 	font-weight: bold;
 }
 
@@ -160,6 +155,10 @@ pre {
 	right: 105%;
 	top: 0;
 	z-index: 1;
+}
+
+.wrapper {
+	position: relative;
 }
 
 .asm-token:hover .tt {

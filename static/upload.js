@@ -5,8 +5,6 @@
  * Handle the file selection aspects of the application
  *********************************************************************/
 
-var hoverbg = "#DDD";
-
 $(document).ready( function readyFunction() {
 	// Handle file uploads
 	$('.inputfile').change(function autoSubmit() {
@@ -14,6 +12,34 @@ $(document).ready( function readyFunction() {
 		$('#asm-code').html('<div id="compiling">compiling...</div>');
 		// Auto submit on file select
 		$(this).parent().submit();
+	});
+
+	// Handle relative positioning of tooltips on hover
+	$('.asm-mnemonic').mouseover( function tt_hover() {
+		// Get current item and relatively positioned wrapper
+		var $item = $(this),
+			$tooltip = $("> .tt", $item),
+			pos = $item.position();
+
+		// Calculate new position for tooltip
+		var top = pos.top,
+			left = pos.left;
+
+		console.log('Left: ' + left);
+		console.log('Top:  ' + top);
+
+		// Require that tooltip render in window
+		if (top + $tooltip.height() > $("#asm-code").height()) {
+			top = $("#asm-code").height() - $tooltip.height();
+		}
+
+		// Set position of tooltip
+	    $tooltip.css({
+	     	'top': 		top,
+	    	'left': 	left
+	    });
+
+	   	console.log($tooltip.position().left + ', ' + $tooltip.position().top);
 	});
 
 	// Handle alignment of corresponding divs
@@ -32,15 +58,22 @@ $(document).ready( function readyFunction() {
 	});
 
 	// Handle corresponding highlights for mouse-overs
-	$('.asm-label').on("hover", function hoverLabel() {
-		var val = $(this).text();
+	$('.asm-label').hover( function mouseIn() {
+		var hoverbg = "#DDD",
+			val = $(this).text().replace(':','');
 
+		// Select all tokens and filter those containing the label
+		$('.token-text').filter( function matchText(i, el) {
+			return $(el).text().includes(val)
+		}).css("background-color", hoverbg);
+
+	}, function mouseOut() {
+		var val = $(this).text().replace(':','');
 		// Select labels again and filter those with the same name
-		$('.asm-label')
-			.filter(TEXT = VAL)
-			.css("background-color", hoverbg); // not right
+		$('.token-text').filter( function matchText(i, el) {
+			return $(el).text().includes(val)
+		}).css("background-color", "inherit");
 	});
-
 });
 
 
