@@ -27,7 +27,6 @@ pre {
 	overflow: hidden;
 }
 
-
 #source {
 	background-color: #DDD;
 	padding: 10pt;
@@ -54,10 +53,6 @@ pre {
 	border-bottom: 2pt solid #FFF;
 	/* child of .container */
 	height: 11%;
-}
-
-#main {
-	height: 100%;
 }
 
 #title {
@@ -101,6 +96,9 @@ pre {
 .asm-line, .src-line {
 	padding: 2pt 5pt 2pt 5pt;
 	display: block;
+}
+
+.src-line {
 	overflow: hidden;
 }
 
@@ -117,12 +115,12 @@ pre {
 }
 
 .asm-mnemonic {
-	position: relative;
 	font-weight: bold;
 }
 
 .token-text {
 	border-radius: 5px;
+	white-space: nowrap;
 	padding: 0 5pt 0 5pt;
 }
 
@@ -157,6 +155,10 @@ pre {
 	right: 105%;
 	top: 0;
 	z-index: 1;
+}
+
+.wrapper {
+	position: relative;
 }
 
 .asm-token:hover .tt {
@@ -260,6 +262,7 @@ pre {
 
 .loc {
 	border-radius: 5px;
+	cursor: pointer;
 }
 
 .color-1 {

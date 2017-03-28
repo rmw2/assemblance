@@ -49,11 +49,13 @@
 			</form>
 			</div>
 
+			<div class="wrapper">
 			<div id="source-code" class="content">
 				{% if srctext %}
 					{{srctext|safe}}
 				{% else %} Source goes here.
 				{% endif %}
+			</div>
 			</div>
 		</div>
 
@@ -67,12 +69,13 @@
 				<div class="clear"></div>
 			<!--</form>-->
 			</div>
-
+			<div class="wrapper">
 			<div id="asm-code" class="content">
 				{% if asmtext %}
 					{{asmtext|safe}}
 				{% else %} Assembly goes here.
 				{% endif %}
+			</div>
 			</div>
 		</div><!-- /.container -->
 	</div>

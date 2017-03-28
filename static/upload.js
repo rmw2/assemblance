@@ -6,16 +6,117 @@
  *********************************************************************/
 
 $(document).ready( function readyFunction() {
+	// Handle file uploads
 	$('.inputfile').change(function autoSubmit() {
 		// Flash "compiling..." message while server-side runs
 		$('#asm-code').html('<div id="compiling">compiling...</div>');
 		// Auto submit on file select
 		$(this).parent().submit();
 	});
+
+	// Handle relative positioning of tooltips on hover
+	$('.asm-mnemonic').mouseover( function tooltip() {
+		// Get current item and relatively positioned wrapper
+		var $item = $(this),
+			$tooltip = $("> .tt", $item),
+			pos = $item.position();
+
+		// Calculate new position for tooltip
+		var top = pos.top,
+			left = pos.left;
+
+		// Require that tooltip render in window (vertical alignment)
+		if (top + $tooltip.height() > $("#asm-code").height()) {
+			top = $("#asm-code").height() - $tooltip.height();
+		}
+
+		// Align horizontally
+		left = left - $tooltip.width() - $item.width() / 2;
+
+		// Set position of tooltip
+	    $tooltip.css({
+	     	'top': 		top,
+	    	'left': 	left
+	    });
+	});
+
+	// Handle alignment of corresponding divs
+	$('div[id^="src-line-"]').click( function align() {
+		// get line number from end of id attribute
+		var n = $(this).attr("id").split("-").pop();
+
+		// select the corresponding element
+		var $match = $("#for-line-" + n);
+
+		// calculate current position of c line relative to corresponding block
+		var rel = $match.position().top - $(this).position().top;
+		// incorporate current value of scrollTop to get new scroll
+		var scroll = $("#asm-code").scrollTop() + rel;
+
+		// scroll to new position, animate over half second
+		$("#asm-code").animate({
+			scrollTop: scroll
+		}, 500);
+
+		highlight($(this));
+		highlight($match);
+	});
+
+		// Handle alignment of corresponding divs
+	$('div[id^="for-line-"]').click( function align() {
+		// get line number from end of id attribute
+		var n = $(this).attr("id").split("-").pop();
+
+		// select the corresponding element
+		var $match = $("#src-line-" + n);
+
+		// calculate current position of c line relative to corresponding block
+		var rel = $match.position().top - $(this).position().top;
+		// incorporate current value of scrollTop to get new scroll
+		var scroll = $("#source-code").scrollTop() + rel;
+
+		// scroll to new position, animate over half second
+		$("#source-code").animate({
+			scrollTop: scroll
+		}, 500);
+
+		highlight($(this));
+		highlight($match);
+	});
+
+	// Handle corresponding highlights for mouse-overs
+	$('.asm-label').hover(
+
+		function mouseIn() {
+			var hoverbg = "#DDD",
+				val = $(this).text().replace(':','');
+
+			// Select all tokens and filter those containing the label
+			$('.token-text').filter( function matchText(i, el) {
+				return $(el).text().includes(val);
+			}).css("background-color", hoverbg);
+		},
+
+		function mouseOut() {
+			var val = $(this).text().replace(':','');
+
+			// Select labels again and filter those with the same name
+			$('.token-text').filter( function matchText(i, el) {
+				return $(el).text().includes(val);
+			}).css("background-color", "inherit");
+
+	});
 });
 
+function highlight($el) {
+	// Add border
+	$el.css('border', 'solid 3px black');
+	// Remove border
+	$el.animate({
+		'border-width' : 0
+	}, 1000);
+}
 
-// $(document).ready( function readyFunction() {
 // 	var cReader, sReader;
 
 // 	if (window.File && window.FileReader) {

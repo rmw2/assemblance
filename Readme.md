@@ -34,6 +34,8 @@ Special thanks to Bob Dondero for his advising during this project, and the x86-
   - Broke tooltip popups, need to re-style them
 * (3/27) Can successfully determine locations of variables stored on the stack and in registers
   - Markup not yet completed / matching not visible browser side
+* (3/28) Finished scrolling animations and fixed popup tooltips to work with scrolling
+
 
 ## TODO
 * Finish variable name / memory address correspondance
