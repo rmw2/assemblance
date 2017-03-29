@@ -84,7 +84,7 @@ function align(id, fromBox, toBox) {
 		var fromTop = $(this).position().top;
 
 		// Make sure top of selected assembly block is in the frame
-		if (fromTop < 0) {
+		if (fromTop < 0 || $(this).height() > $(fromBox).height()) {
 			$(fromBox).animate({
 				scrollTop: $(fromBox).scrollTop() + fromTop
 			});
@@ -93,6 +93,7 @@ function align(id, fromBox, toBox) {
 		}
 		// Make sure bottom of assembly block is in the frame
 		else if (fromTop + $(this).height() > $(fromBox).height()) {
+
 			$(fromBox).animate({
 				scrollTop: $(fromBox).scrollTop() + (fromTop + $(this).height() - $(fromBox).height())
 			});

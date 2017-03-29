@@ -41,17 +41,15 @@ def allowed_file(filename):
 @app.route('/', methods=['GET', 'POST'])
 def index():
     """ Index: serve the homepage and handle file uploads.
-
     Issue-- this currently re-renders the entire template every time...
     """
+
     if 'uid' not in session:
         session['uid'] = str(uuid4())
     if 'src-markup' not in session:
         session['src-markup'] = 'source goes here'
     if 'asm-markup' not in session:
         session['asm-markup'] = 'assembly goes here'
-    if 'colors' not in session:
-        session['colors'] = []
 
     if request.method == 'POST':
         # Get file from request if it exists
@@ -78,10 +76,8 @@ def index():
             sfilepath = os.path.join(prefix, filename[:-2] + '.s')
             ofilepath = os.path.join(prefix, filename[:-2] + '.o')
 
-            # Compile source to assembly
+            # Compile source to assembly and ELF
             pres1 = subprocess.call([gcc, '-g', '-S', filepath, '-o', sfilepath])
-
-            # Compile source to ELF
             pres2 = subprocess.call([gcc, '-g', '-c', filepath, '-o', ofilepath])
 
             # Check for compilation errors
@@ -91,17 +87,16 @@ def index():
 
             # Load assembly and ELF
             with open(sfilepath, 'r') as sfile:
-                session['asm'] = [line for line in sfile.readlines()]
+                asm = [line for line in sfile.readlines()]
             with open(ofilepath, 'rb') as ofile:
-                locs, _ = find_variables(ofile)
+                locs = find_variables(ofile)
 
             # Process
-            (session['asm-markup'], session['colors']) = process_asm(session['asm'])
+            (session['asm-markup'], colors) = process_asm(asm)
+            session['src-markup'] = format_c(session['src'], colors)
         else:
             return redirect(request.url)
 
-        if 'src' in session and 'asm' in session:
-            session['src-markup'] = format_c(session['src'], session['colors'])
 
     return render_template('index.html', srctext=session['src-markup'], asmtext=session['asm-markup'])
 

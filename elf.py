@@ -56,7 +56,6 @@ def get_leb128(leb, signed=True):
 
     return value
 
-
 def find_variables(stream):
     """ Take a dwarf_info object and generate a dictionary of source code
     symbols and stack/register positions.
@@ -75,7 +74,7 @@ def find_variables(stream):
         # Walk through top level children, includes functions and types
         if die.tag == FCN_TAG:
             # Handle function, descend
-            fcn = die.attributes[NAME].value.decode('UTF-8')
+            fcn = parse_name(die.attributes[NAME])
 
             # Add general function attributes to dictionary
             symbols[fcn] = {
@@ -91,10 +90,10 @@ def find_variables(stream):
             for child in die.iter_children():
                 if child.tag == VAR_TAG:
                     # Get variable name, type, and locations
-                    name = child.attributes[NAME].value.decode('UTF-8')
-                    typ = child.attributes[TYPE].value
+                    name = parse_name(child.attributes[NAME])
+                    typ = parse_type(child.attributes[TYPE])
                     line = child.attributes[LINE].value
-                    loc = child.attributes[LOC].value
+                    loc = parse_location(child.attributes[LOC])
 
                     # Add to dictionary
                     symbols[fcn][name] = {
@@ -105,7 +104,7 @@ def find_variables(stream):
 
         elif die.tag == TYP_TAG:
             # Add type to dictionary
-            name = die.attributes[NAME].value
+            name = parse_type(die.attributes[NAME])
             offset = die.offset
             types[offset] = name
 
@@ -117,50 +116,42 @@ def find_variables(stream):
             # Lookup defined tag and add to dictionary
             pass
 
-    # Refactor dictionary and include symbols
-    locs = {}
+    # Turn type references into actual types
     for fcn in symbols:
-        # Divide by function
-        locs[fcn] = {}
-        for sym in symbols[fcn]:
-            if sym.startswith('$'): continue
+        for name in symbols[fcn]:
+            if "$" in name: continue
+            try:
+                symbols[fcn][name]['type'] = types[symbols[fcn][name]['type']]
+            except KeyError:
+                pass
 
-            # Translate location into assembly
-            loc = parse_location(symbols[fcn][sym]['loc'])
-            typ = symbols[fcn][sym]['type']
+    return symbols
 
-            if typ in types:
-                # Add location to dictionary
-                locs[fcn][loc] = {
-                    'name'  : sym,
-                    'type'  : types[typ],
-                    'line'  : symbols[fcn][sym]['line']
-                }
+def parse_name(name):
+    return name.value.decode('UTF-8')
 
-    return locs, symbols
+def parse_type(typ):
+    try:
+        return typ.value.decode('UTF-8')
+    except:
+        return typ.value
 
 def parse_location(loc):
     """ Take the value of a location attribute (DW_AT_location) loc
     and return a string corresponding to its location in memory in
     x86-assembly (usually either a register or offset from one).
     """
-
-    # Format string for indirect addressing
-    ind = "{}(%{})"
+    loc = loc.value
 
     if loc[0] == OP_CFA:
         # Indicates (signed) LEB128 offset from base pointer
-        offset = get_leb128(loc[1:])
-        result = ind.format(offset, 'rbp')
-
-        return result
+        return get_leb128(loc[1:])
 
     if loc[0] >= OP_REG and loc[0] < OP_BREG:
         # Indicates in-register location
 
         # TODO: figure out size of operand and change register name accordingly
         result = regs[loc[0] - OP_REG]
-
         return '%' + result
 
     if loc[0] >= OP_BREG:
@@ -169,7 +160,57 @@ def parse_location(loc):
         # Get register
         reg = regs[loc[0] - OP_BREG]
 
-        return ind.format(offset, reg)
+        return [offset, reg]
+
+def format_location(loc, offset):
+    # Format string for indirect addressing
+    ind = "{}({})"
+
+    if type(loc) is int:
+        # offset from %rbp, corrected by cfa_offset
+        return ind.format(loc + offset, '%rbp')
+    if type(loc) is list:
+        # register + offset pair
+        return ind.format(loc[0], loc[1])
+    if type(loc) is str:
+        # register only
+        return loc
+
+    raise "you fuq'd up son"
+
+
+def find_locations(symbols, asm):
+    # Refactor dictionary and include symbols
+    locs = {}
+
+    # Get cfa offsets from assembly file
+    name = None
+    for line in asm:
+        if "@function" in line:
+            tokens = line.strip().split()
+            name = tokens[1].strip(',')
+        if name is not None and ".cfi_def_cfa_offset" in line:
+            tokens = line.strip().split()
+            offset = int(tokens[1])
+            locs[name] = {'offset' : offset}
+
+    # Get symbols by location, corrected by offset
+    for fcn in symbols:
+        # Lookup base pointer offset
+        for sym in symbols[fcn]:
+            if sym.startswith('$'): continue
+
+            # Translate location into x86-assembly
+            loc = format_location(symbols[fcn][sym]['loc'], locs[fcn]['offset'])
+
+            # Add to dictionary
+            locs[fcn][loc] = {
+                'name'  : sym,
+                'type'  : symbols[fcn][sym]['type'],
+                'line'  : symbols[fcn][sym]['line']
+            }
+
+    return locs
 
 if __name__ == "__main__":
     from elftools.elf.elffile import ELFFile
@@ -179,9 +220,13 @@ if __name__ == "__main__":
     # Process each file
     for filename in sys.argv[1:]:
         with open(filename, 'rb') as file:
-            (locs, symbols) = find_variables(file)
+            syms = find_variables(file)
+        with open(filename[:-2] + '.s') as file:
+            lines = file.readlines()
+
+        locs = find_locations(syms, lines)
 
         print('\nSymbols:')
-        pprint(symbols)
+        pprint(syms)
         print('\nLocations:')
         pprint(locs)

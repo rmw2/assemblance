@@ -1,0 +1,221 @@
+<html>
+<head>
+<link rel=stylesheet href=style.css>
+</head>
+<body>
+<div class="highlight"><pre><span></span><span class="cm">/**********************************************************************</span>
+<span class="cm"> * File:       decomment.c</span>
+<span class="cm"> * Author:     Rob Whitaker</span>
+<span class="cm"> * NetID:      rmw2</span>
+<span class="cm"> *********************************************************************/</span>
+
+<span class="cp">#include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;stdlib.h&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;ctype.h&gt;</span><span class="cp"></span>
+
+<span class="cm">/* State data type for represent DFA */</span>
+<span class="k">enum</span> <span class="n">State</span> <span class="p">{</span><span class="n">NORMAL</span><span class="p">,</span> <span class="n">INSTR</span><span class="p">,</span> <span class="n">INCHAR</span><span class="p">,</span> <span class="n">INCOMM</span><span class="p">,</span> <span class="n">STARTCOMM</span><span class="p">,</span> \
+   <span class="n">ENDCOMM</span><span class="p">,</span> <span class="n">ESCAPECHAR</span><span class="p">,</span> <span class="n">ESCAPESTR</span><span class="p">};</span>
+
+<span class="cm">/* Process characters from the normal context.</span>
+<span class="cm"> * All characters are output to stdout */</span>
+<span class="k">enum</span> <span class="n">State</span> <span class="nf">handleNormal</span><span class="p">(</span><span class="kt">int</span> <span class="n">ch</span><span class="p">)</span> <span class="p">{</span>
+   <span class="k">enum</span> <span class="n">State</span> <span class="n">state</span> <span class="o">=</span> <span class="n">NORMAL</span><span class="p">;</span>
+
+   <span class="cm">/* Handling special characters for normal state */</span>
+   <span class="k">switch</span> <span class="p">(</span><span class="n">ch</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">case</span> <span class="sc">&#39;/&#39;</span><span class="o">:</span>
+         <span class="cm">/* exit immediately, don&#39;t output ch */</span>
+         <span class="k">return</span> <span class="n">STARTCOMM</span><span class="p">;</span>
+      <span class="k">case</span> <span class="sc">&#39;\&#39;&#39;</span><span class="o">:</span>
+         <span class="n">state</span> <span class="o">=</span> <span class="n">INCHAR</span><span class="p">;</span>
+         <span class="k">break</span><span class="p">;</span>
+      <span class="k">case</span> <span class="sc">&#39;\&quot;&#39;</span><span class="o">:</span>
+         <span class="n">state</span> <span class="o">=</span> <span class="n">INSTR</span><span class="p">;</span>
+         <span class="k">break</span><span class="p">;</span>
+   <span class="p">}</span>
+   <span class="n">putchar</span><span class="p">(</span><span class="n">ch</span><span class="p">);</span>
+   <span class="k">return</span> <span class="n">state</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="cm">/* Process characters from context of a string literal</span>
+<span class="cm"> * Always put ch to stdout, return dfa state after consuming ch */</span>
+<span class="k">enum</span> <span class="n">State</span> <span class="nf">handleInStr</span><span class="p">(</span><span class="kt">int</span> <span class="n">ch</span><span class="p">)</span> <span class="p">{</span>
+   <span class="k">enum</span> <span class="n">State</span> <span class="n">state</span> <span class="o">=</span> <span class="n">INSTR</span><span class="p">;</span>
+
+   <span class="cm">/* Handle special characters for string state */</span>
+   <span class="k">switch</span> <span class="p">(</span><span class="n">ch</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">case</span> <span class="sc">&#39;\&quot;&#39;</span><span class="o">:</span>
+         <span class="n">state</span> <span class="o">=</span> <span class="n">NORMAL</span><span class="p">;</span>
+         <span class="k">break</span><span class="p">;</span>
+      <span class="k">case</span> <span class="sc">&#39;\\&#39;</span><span class="o">:</span>
+         <span class="n">state</span> <span class="o">=</span> <span class="n">ESCAPESTR</span><span class="p">;</span>
+         <span class="k">break</span><span class="p">;</span>
+   <span class="p">}</span>
+
+   <span class="n">putchar</span><span class="p">(</span><span class="n">ch</span><span class="p">);</span>
+   <span class="k">return</span> <span class="n">state</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="cm">/* Process characters from context of a character literal</span>
+<span class="cm"> * Always put ch to stdout.  Return state after consuming ch */</span>
+<span class="k">enum</span> <span class="n">State</span> <span class="nf">handleInChar</span><span class="p">(</span><span class="kt">int</span> <span class="n">ch</span><span class="p">)</span> <span class="p">{</span>
+   <span class="k">enum</span> <span class="n">State</span> <span class="n">state</span> <span class="o">=</span> <span class="n">INCHAR</span><span class="p">;</span>
+
+   <span class="cm">/* Handle special characters for char state */</span>
+   <span class="k">switch</span> <span class="p">(</span><span class="n">ch</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">case</span> <span class="sc">&#39;\&#39;&#39;</span><span class="o">:</span>
+         <span class="n">state</span> <span class="o">=</span> <span class="n">NORMAL</span><span class="p">;</span>
+         <span class="k">break</span><span class="p">;</span>
+      <span class="k">case</span> <span class="sc">&#39;\\&#39;</span><span class="o">:</span>
+         <span class="n">state</span> <span class="o">=</span> <span class="n">ESCAPECHAR</span><span class="p">;</span>
+         <span class="k">break</span><span class="p">;</span>
+   <span class="p">}</span>
+
+   <span class="n">putchar</span><span class="p">(</span><span class="n">ch</span><span class="p">);</span>
+   <span class="k">return</span> <span class="n">state</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="cm">/* Process escaped characters inside character literal</span>
+<span class="cm"> * Output ch and return INCHAR */</span>
+<span class="k">enum</span> <span class="n">State</span> <span class="nf">handleEscapeChar</span><span class="p">(</span><span class="kt">int</span> <span class="n">ch</span><span class="p">)</span> <span class="p">{</span>
+   <span class="cm">/* escaped characters are output always */</span>
+   <span class="n">putchar</span><span class="p">(</span><span class="n">ch</span><span class="p">);</span>
+   <span class="k">return</span> <span class="n">INCHAR</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="cm">/* Process escaped characters inside string literal</span>
+<span class="cm"> * Put ch to stdout, return INSTR */</span>
+<span class="k">enum</span> <span class="n">State</span> <span class="nf">handleEscapeStr</span><span class="p">(</span><span class="kt">int</span> <span class="n">ch</span><span class="p">)</span> <span class="p">{</span>
+   <span class="cm">/* escaped characters are output always */</span>
+   <span class="n">putchar</span><span class="p">(</span><span class="n">ch</span><span class="p">);</span>
+   <span class="k">return</span> <span class="n">INSTR</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="cm">/* Process potential comment beginning.  If asterisk, return INCOMM,</span>
+<span class="cm"> * else return NORMAL and output the preceding slash and ch. */</span>
+<span class="k">enum</span> <span class="n">State</span> <span class="nf">handleStartComm</span><span class="p">(</span><span class="kt">int</span> <span class="n">ch</span><span class="p">)</span> <span class="p">{</span>
+   <span class="k">enum</span> <span class="n">State</span> <span class="n">state</span> <span class="o">=</span> <span class="n">NORMAL</span><span class="p">;</span>
+   <span class="cm">/* If a comment has begun, switch to comment state */</span>
+   <span class="k">switch</span> <span class="p">(</span><span class="n">ch</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">case</span> <span class="sc">&#39;*&#39;</span><span class="o">:</span>
+         <span class="cm">/* comment begins, output space and change states */</span>
+         <span class="n">putchar</span><span class="p">(</span><span class="sc">&#39; &#39;</span><span class="p">);</span>
+         <span class="k">return</span> <span class="n">INCOMM</span><span class="p">;</span>
+      <span class="k">case</span> <span class="sc">&#39;/&#39;</span><span class="o">:</span>
+         <span class="cm">/* new potential comment beginning, ouput previous slash */</span>
+         <span class="n">putchar</span><span class="p">(</span><span class="n">ch</span><span class="p">);</span>
+         <span class="k">return</span> <span class="n">STARTCOMM</span><span class="p">;</span>
+      <span class="k">case</span> <span class="sc">&#39;\&#39;&#39;</span><span class="o">:</span>
+         <span class="cm">/* start character literal */</span>
+         <span class="n">state</span> <span class="o">=</span> <span class="n">INCHAR</span><span class="p">;</span>
+         <span class="k">break</span><span class="p">;</span>
+      <span class="k">case</span> <span class="sc">&#39;\&quot;&#39;</span><span class="o">:</span>
+         <span class="cm">/* start string literal */</span>
+         <span class="n">state</span> <span class="o">=</span> <span class="n">INSTR</span><span class="p">;</span>
+         <span class="k">break</span><span class="p">;</span>
+   <span class="p">}</span>
+
+   <span class="cm">/* Retroactively output forwardslash and ch */</span>
+   <span class="n">putchar</span><span class="p">(</span><span class="sc">&#39;/&#39;</span><span class="p">);</span>
+   <span class="n">putchar</span><span class="p">(</span><span class="n">ch</span><span class="p">);</span>
+   <span class="k">return</span> <span class="n">state</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="cm">/* Process characters within a comment.  Only newlines are output and </span>
+<span class="cm"> * asterisk changes state.  Return ENDCOMM if ch is &quot;*&quot;.  Otherwise</span>
+<span class="cm"> * return INCOMM. */</span>
+<span class="k">enum</span> <span class="n">State</span> <span class="nf">handleInComm</span><span class="p">(</span><span class="kt">int</span> <span class="n">ch</span><span class="p">)</span> <span class="p">{</span>
+   <span class="cm">/* Newlines must still be output, only asterisk changes state */</span>
+   <span class="k">switch</span> <span class="p">(</span><span class="n">ch</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">case</span> <span class="sc">&#39;\n&#39;</span><span class="o">:</span>
+         <span class="n">putchar</span><span class="p">(</span><span class="n">ch</span><span class="p">);</span>
+         <span class="k">break</span><span class="p">;</span>
+      <span class="k">case</span> <span class="sc">&#39;*&#39;</span><span class="o">:</span>
+         <span class="k">return</span> <span class="n">ENDCOMM</span><span class="p">;</span>
+   <span class="p">}</span>
+
+   <span class="cm">/* If not possible end comment, remain in same state */</span>
+   <span class="k">return</span> <span class="n">INCOMM</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="cm">/* Process character at potential end of comment.  Output a space if </span>
+<span class="cm"> * comment ends and return NORMAL, else return INCOMM. </span>
+<span class="cm"> * Print newline if ch is &#39;\n&#39;. */</span>
+<span class="k">enum</span> <span class="n">State</span> <span class="nf">handleEndComm</span><span class="p">(</span><span class="kt">int</span> <span class="n">ch</span><span class="p">)</span> <span class="p">{</span>
+   <span class="cm">/* if comment ends, return to normal */</span>
+   <span class="k">switch</span> <span class="p">(</span><span class="n">ch</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">case</span> <span class="sc">&#39;/&#39;</span><span class="o">:</span>
+         <span class="k">return</span> <span class="n">NORMAL</span><span class="p">;</span>
+      <span class="k">case</span> <span class="sc">&#39;\n&#39;</span><span class="o">:</span>
+         <span class="n">putchar</span><span class="p">(</span><span class="n">ch</span><span class="p">);</span>
+         <span class="k">break</span><span class="p">;</span>
+      <span class="k">case</span> <span class="sc">&#39;*&#39;</span><span class="o">:</span>
+         <span class="k">return</span> <span class="n">ENDCOMM</span><span class="p">;</span>
+   <span class="p">}</span>
+   <span class="cm">/* if still in comment, do nothing and return to INCOMM */</span>
+   <span class="k">return</span> <span class="n">INCOMM</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="cm">/* Read from the standard input stream and output the </span>
+<span class="cm"> * same with the comments removed, preserving original</span>
+<span class="cm"> * line numbers. */</span>
+<span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span> <span class="p">{</span>
+   <span class="kt">int</span> <span class="n">ch</span><span class="p">;</span>
+   <span class="k">enum</span> <span class="n">State</span> <span class="n">state</span> <span class="o">=</span> <span class="n">NORMAL</span><span class="p">;</span>
+   <span class="cm">/* Initialize line numbers to zero */</span>
+   <span class="kt">int</span> <span class="n">line</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+   <span class="kt">int</span> <span class="n">lastCommentStart</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+
+   <span class="cm">/* Read all characters from stdin */</span>
+   <span class="k">while</span> <span class="p">((</span><span class="n">ch</span> <span class="o">=</span> <span class="n">getchar</span><span class="p">())</span> <span class="o">!=</span> <span class="n">EOF</span><span class="p">)</span> <span class="p">{</span>
+      <span class="cm">/* Increase line count for newlines */</span>
+      <span class="k">if</span> <span class="p">(</span><span class="n">ch</span> <span class="o">==</span> <span class="sc">&#39;\n&#39;</span><span class="p">)</span> <span class="n">line</span><span class="o">++</span><span class="p">;</span>
+
+      <span class="cm">/* Handle character depending on state */</span>
+      <span class="k">switch</span> <span class="p">(</span><span class="n">state</span><span class="p">)</span> <span class="p">{</span>
+         <span class="k">case</span> <span class="nl">NORMAL</span><span class="p">:</span>
+            <span class="n">state</span> <span class="o">=</span> <span class="n">handleNormal</span><span class="p">(</span><span class="n">ch</span><span class="p">);</span>
+            <span class="k">break</span><span class="p">;</span>
+         <span class="k">case</span> <span class="nl">INSTR</span><span class="p">:</span>
+            <span class="n">state</span> <span class="o">=</span> <span class="n">handleInStr</span><span class="p">(</span><span class="n">ch</span><span class="p">);</span>
+            <span class="k">break</span><span class="p">;</span>
+         <span class="k">case</span> <span class="nl">INCHAR</span><span class="p">:</span>
+            <span class="n">state</span> <span class="o">=</span> <span class="n">handleInChar</span><span class="p">(</span><span class="n">ch</span><span class="p">);</span>
+            <span class="k">break</span><span class="p">;</span>
+         <span class="k">case</span> <span class="nl">ESCAPECHAR</span><span class="p">:</span>
+            <span class="n">state</span> <span class="o">=</span> <span class="n">handleEscapeChar</span><span class="p">(</span><span class="n">ch</span><span class="p">);</span>
+            <span class="k">break</span><span class="p">;</span>
+         <span class="k">case</span> <span class="nl">ESCAPESTR</span><span class="p">:</span>
+            <span class="n">state</span> <span class="o">=</span> <span class="n">handleEscapeStr</span><span class="p">(</span><span class="n">ch</span><span class="p">);</span>
+            <span class="k">break</span><span class="p">;</span>
+         <span class="k">case</span> <span class="nl">STARTCOMM</span><span class="p">:</span>
+            <span class="n">state</span> <span class="o">=</span> <span class="n">handleStartComm</span><span class="p">(</span><span class="n">ch</span><span class="p">);</span>
+            <span class="cm">/* Keep track of comment start line */</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">state</span> <span class="o">==</span> <span class="n">INCOMM</span><span class="p">)</span> <span class="n">lastCommentStart</span> <span class="o">=</span> <span class="n">line</span><span class="p">;</span>
+            <span class="k">break</span><span class="p">;</span>
+         <span class="k">case</span> <span class="nl">INCOMM</span><span class="p">:</span>
+            <span class="n">state</span> <span class="o">=</span> <span class="n">handleInComm</span><span class="p">(</span><span class="n">ch</span><span class="p">);</span>
+            <span class="k">break</span><span class="p">;</span>
+         <span class="k">case</span> <span class="nl">ENDCOMM</span><span class="p">:</span>
+            <span class="n">state</span> <span class="o">=</span> <span class="n">handleEndComm</span><span class="p">(</span><span class="n">ch</span><span class="p">);</span>
+            <span class="k">break</span><span class="p">;</span>
+      <span class="p">}</span>
+   <span class="p">}</span>
+   <span class="cm">/* Must output final forwardslash if ended in STARTCOMM */</span>
+   <span class="k">if</span> <span class="p">(</span><span class="n">state</span> <span class="o">==</span> <span class="n">STARTCOMM</span><span class="p">)</span> <span class="n">putchar</span><span class="p">(</span><span class="sc">&#39;/&#39;</span><span class="p">);</span>
+
+   <span class="cm">/* Check if there are any unterminated comments */</span>
+   <span class="k">if</span> <span class="p">(</span><span class="n">state</span> <span class="o">==</span> <span class="n">INCOMM</span> <span class="o">||</span> <span class="n">state</span> <span class="o">==</span> <span class="n">ENDCOMM</span><span class="p">)</span> <span class="p">{</span>
+      <span class="cm">/* output line of unterminated comment to stderr */</span>
+      <span class="n">fprintf</span><span class="p">(</span><span class="n">stderr</span><span class="p">,</span> <span class="s">&quot;Error: line %d: unterminated comment</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span> \
+          <span class="n">lastCommentStart</span><span class="p">);</span>
+      <span class="k">return</span> <span class="n">EXIT_FAILURE</span><span class="p">;</span>
+   <span class="p">}</span>
+
+   <span class="cm">/* Otherwise we end in accept state */</span>
+   <span class="k">return</span> <span class="n">EXIT_SUCCESS</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</body>
+</html>

@@ -279,7 +279,7 @@ def format_c(c, colors=[]):
         # 1-based line numbering
         l = i+1
 
-        # Content
+        # TODO: syntax highlighting with pygments
         line = line.replace('<', '&lt;').replace('>', '&gt;')
         line = div.format(d="c-line-"+str(l), cl="c-line", cx=line)
         # Number
