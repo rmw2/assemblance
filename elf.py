@@ -212,6 +212,20 @@ def find_locations(symbols, asm):
 
     return locs
 
+def parse_elf(stream, asm):
+    """ Take an open stream corresponding to and ELF (.o) file,
+    and it's corresponding assembly code as a list of strings
+    and parse the debugging information into a dictionary of
+    locations and symbols.  Close the stream when finished.
+    """
+
+    syms = find_variables(stream)
+    locs = find_locations(syms, asm)
+    stream.close()
+
+    return locs
+
+
 if __name__ == "__main__":
     from elftools.elf.elffile import ELFFile
     from pprint import pprint
@@ -219,14 +233,10 @@ if __name__ == "__main__":
 
     # Process each file
     for filename in sys.argv[1:]:
-        with open(filename, 'rb') as file:
-            syms = find_variables(file)
-        with open(filename[:-2] + '.s') as file:
-            lines = file.readlines()
+        with open(filename, 'rb') as ofile:
+            with open(filename[:-2] + '.s') as sfile:
+                asm = sfile.readlines()
+                locs = parse_elf(ofile, asm)
 
-        locs = find_locations(syms, lines)
-
-        print('\nSymbols:')
-        pprint(syms)
         print('\nLocations:')
         pprint(locs)
