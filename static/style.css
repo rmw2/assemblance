@@ -145,10 +145,6 @@ pre {
 	color: #8b7355;
 }
 
-.asm-register {
-	color: #8b3e2f;
-}
-
 .tt {
 	visibility: hidden;
 	position: absolute;
@@ -297,3 +293,78 @@ pre {
 	background-color: rgba(169, 222, 249, .8);
 }
 
+
+/**********************************************************************
+ * Operand token highlighting
+ *********************************************************************/
+
+/* Numbers */
+.token-op-m {
+	color: #858585;
+}
+
+/* Labels */
+.token-op-nl {
+	color: #1F1B53;
+/*	color: #8b7355;
+*/}
+
+/* Registers */
+.token-op-nv {
+	color: #8b3e2f;
+}
+
+/* Punctuation */
+.token-op-p {
+	/* Nothing */
+}
+
+/**********************************************************************
+ * Source token highlighting
+ *********************************************************************/
+
+.c-token-hll { background-color: #ffffcc }
+.c-token-c { color: #408080; font-style: italic } /* Comment */
+.c-token-err { border: 1px solid #FF0000 } /* Error */
+.c-token-k { color: #008000; font-weight: bold } /* Keyword */
+.c-token-o { color: #666666 } /* Operator */
+.c-token-ch { color: #408080; font-style: italic } /* Comment.Hashbang */
+.c-token-cm { color: #408080; font-style: italic } /* Comment.Multiline */
+.c-token-cp { color: #BC7A00 } /* Comment.Preproc */
+.c-token-cpf { color: #408080; font-style: italic } /* Comment.PreprocFile */
+.c-token-c1 { color: #408080; font-style: italic } /* Comment.Single */
+.c-token-cs { color: #408080; font-style: italic } /* Comment.Special */
+.c-token-kc { color: #008000; font-weight: bold } /* Keyword.Constant */
+.c-token-kd { color: #008000; font-weight: bold } /* Keyword.Declaration */
+.c-token-kn { color: #008000; font-weight: bold } /* Keyword.Namespace */
+.c-token-kp { color: #008000 } /* Keyword.Pseudo */
+.c-token-kr { color: #008000; font-weight: bold } /* Keyword.Reserved */
+.c-token-kt { color: #B00040 } /* Keyword.Type */
+.c-token-m { color: #666666 } /* Literal.Number */
+.c-token-s { color: #BA2121 } /* Literal.String */
+.c-token-na { color: #7D9029 } /* Name.Attribute */
+.c-token-nb { color: #008000 } /* Name.Builtin */
+.c-token-nc { color: #0000FF; font-weight: bold } /* Name.Class */
+.c-token-no { color: #880000 } /* Name.Constant */
+.c-token-nd { color: #AA22FF } /* Name.Decorator */
+.c-token-ni { color: #999999; font-weight: bold } /* Name.Entity */
+.c-token-ne { color: #D2413A; font-weight: bold } /* Name.Exception */
+.c-token-nf { color: #0000FF } /* Name.Function */
+.c-token-nl { color: #A0A000 } /* Name.Label */
+.c-token-nv { color: #19177C } /* Name.Variable */
+.c-token-mb { color: #666666 } /* Literal.Number.Bin */
+.c-token-mf { color: #666666 } /* Literal.Number.Float */
+.c-token-mh { color: #666666 } /* Literal.Number.Hex */
+.c-token-mi { color: #666666 } /* Literal.Number.Integer */
+.c-token-mo { color: #666666 } /* Literal.Number.Oct */
+.c-token-sb { color: #BA2121 } /* Literal.String.Backtick */
+.c-token-sc { color: #BA2121 } /* Literal.String.Char */
+.c-token-sd { color: #BA2121; font-style: italic } /* Literal.String.Doc */
+.c-token-se { color: #BB6622; font-weight: bold } /* Literal.String.Escape */
+.c-token-sh { color: #BA2121 } /* Literal.String.Heredoc */
+.c-token-ss { color: #19177C } /* Literal.String.Symbol */
+.c-token-bp { color: #008000 } /* Name.Builtin.Pseudo */
+.c-token-vc { color: #19177C } /* Name.Variable.Class */
+.c-token-vg { color: #19177C } /* Name.Variable.Global */
+.c-token-vi { color: #19177C } /* Name.Variable.Instance */
+.c-token-il { color: #666666 } /* Literal.Number.Integer.Long */

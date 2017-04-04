@@ -8,7 +8,7 @@ A module for parsing assembly language to identify mnemonics, labels, sections, 
 """
 
 import re, json
-
+from pygments import highlight
 #**********************************************************************
 # Module constants
 #**********************************************************************
@@ -25,7 +25,7 @@ with open('ref.json') as file:
 
 # Allowed directives
 whitelist = ['.section', '.globl', '.byte', '.word', \
-        '.long', '.quad', '.type', '.asciz', '.string', '.skip']
+        '.long', '.quad', '.type', '.asciz', '.ascii', '.string', '.skip']
 
 # Disallowed labels
 badlabel = re.compile('((.LF)|(.Ltemp)|(.Ltext)).*')
@@ -84,14 +84,14 @@ def handle_mnemonic(token, cl):
 
         # suffix not recognized
         if suffix not in sizes:
-            return handle_default(token, cl)
+            return wrap_token(token, cl)
 
         # edit size list appropriately
         sz = sizes[suffix]
         entry['size'] = [(sz if s == 0 else s) for s in entry['size']]
     else:
         # tooltip for mnemonic not supported
-        return handle_default(token, cl)
+        return wrap_token(token, cl)
 
     # Wrap text with span
     token_wrapped = span.format(cl="token-text", cx=token)
@@ -101,35 +101,37 @@ def handle_mnemonic(token, cl):
     # Wrap in div and return
     return div.format(d="", cl="asm-mnemonic asm-token", cx=cx)
 
-def handle_default(token, cl):
+
+
+def wrap_token(token, cl):
     """ Process an token in assembly and return the default formatting.
     """
     inner = span.format(cl="token-text", cx=token)
     return div.format(d="", cl=cl, cx=inner)
 
-#**********************************************************************
-# Assembly regular expressions and token formatting handlers
-#**********************************************************************
+# #**********************************************************************
+# # Assembly regular expressions and token formatting handlers
+# #**********************************************************************
 
-symbol = '([a-zA-Z.][\w.]*)|(\"[\w\s.]+\")*'
+# symbol = '([a-zA-Z.][\w.]*)|(\"[\w\s.]+\")*'
 
-# Regular expressions for different assembly tokens
-regexp = {
-   'register'   :   re.compile('%\w\w\w?'),
-   'address'    :   re.compile('(\$[.\w]*)?\((%\w\w\w?)?,(%\w\w\w?)?(,($2,$4,$8))\)?')
-#   'immediate' :   re.compile('\$' + symbol),
-#   'label'     :   re.compile(symbol + ':'),
-#   'section'   :   re.compile('\.' + symbol),
-}
+# # Regular expressions for different assembly tokens
+# regexp = {
+#    'register'   :   re.compile('%\w\w\w?'),
+#    'address'    :   re.compile('(\$[.\w]*)?\((%\w\w\w?)?,(%\w\w\w?)?(,($2,$4,$8))\)?')
+# #   'immediate' :   re.compile('\$' + symbol),
+# #   'label'     :   re.compile(symbol + ':'),
+# #   'section'   :   re.compile('\.' + symbol),
+# }
 
-# Handlers for different assembly tokens
-handlers = {
-    'register'  :   handle_default,
-    'address'   :   handle_default,
-#   'label'     :   handle_default,
-#   'section'   :   handle_default,
-    'mnemonic'  :   handle_mnemonic
-}
+# # Handlers for different assembly tokens
+# handlers = {
+#     'register'  :   wrap_token,
+#     'address'   :   wrap_token,
+# #   'label'     :   wrap_token,
+# #   'section'   :   wrap_token,
+#     'mnemonic'  :   handle_mnemonic
+# }
 
 
 """
@@ -207,10 +209,7 @@ def process_asm(asm):
         markup += div.format(d="asm-line-"+str(asmline), cl="asm-no", cx=asmline)
 
         # handle formatting for general lines
-        markup += process_first_token(tokens[0])
-
-        for token in tokens[1:]:
-            markup += process_other_token(token)
+        markup += process_tokens(tokens)
 
         markup += '</div>'
 
@@ -242,29 +241,56 @@ def tokenize(line):
 
     return tokens
 
-def process_first_token(token):
+def process_tokens(tokens):
     """ Handle the markup for the first token in a line.
     Can be a label, directive, or mnemonic.
     """
-    if token.endswith(':'):
-        return handle_default(token, 'asm-token asm-label')
-    if token.startswith('.'):
-        return handle_default(token, 'asm-token asm-directive')
+    markup = ''
+    if tokens[0].endswith(':'):
+        return wrap_token(tokens[0], 'asm-token asm-label')
+    elif tokens[0].startswith('.'):
+        markup += wrap_token(tokens[0], 'asm-token asm-directive')
+    else:
+        markup += handle_mnemonic(tokens[0], 'asm-token asm-mnemonic')
 
-    return handle_mnemonic(token, 'asm-token asm-mnemonic')
+        # For mnemonic operands
+        for token in tokens[1:]:
+            markup += process_operand(token)
 
-def process_other_token(token):
+        return markup
+
+    # For directive operands
+    for token in tokens[1:]:
+        markup += wrap_token(token, 'asm-token')
+
+    return markup
+
+from format import DivFormatter, OpLexer
+srcfmtr = DivFormatter(cssclass='c-line', classprefix='c-token-')
+from pygments.lexers import get_lexer_by_name
+srclexer = get_lexer_by_name('c')
+
+oplexer = OpLexer(stripall=True)
+opformatter = DivFormatter(cssclass="operand-text", classprefix="token-op-", spanwrap=True)
+
+
+def process_operand(token):
     """ Handle the markup for the subsequent tokens in a line.
     Can be a directive, register, addressing mode, .
     """
-    for r in regexp:
-        cl = 'asm-token'
-        # check against each regular expression
-        if regexp[r].match(token):
-            cl += ' asm-' + r
-            return handlers[r](token, cl)
 
-    return handle_default(token, 'asm-token')
+    # generic token class and operand class
+    cl = 'asm-token asm-operand'
+
+    # lex operand with custom operand lexer
+    cx = highlight(token, oplexer, opformatter)
+
+    # do lookup in address table and add location tooltip to markup
+    # entry = locs[opt][]
+    # cx += location.format(entry)
+
+    return wrap_token(cx, cl)
+
 
 def format_c(c, colors=[]):
     """ Take a list of lines of c code and generate the corresponding
@@ -279,9 +305,12 @@ def format_c(c, colors=[]):
         # 1-based line numbering
         l = i+1
 
-        # TODO: syntax highlighting with pygments
-        line = line.replace('<', '&lt;').replace('>', '&gt;')
-        line = div.format(d="c-line-"+str(l), cl="c-line", cx=line)
+        # line = line.replace('<', '&lt;').replace('>', '&gt;')
+        # line = div.format(d="c-line-"+str(l), cl="c-line", cx=line)
+
+        # syntax highlighting with pygments
+        line = highlight(line, srclexer, srcfmtr)
+
         # Number
         no = div.format(d="", cl="c-no", cx=l)
 

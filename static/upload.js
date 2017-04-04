@@ -6,6 +6,54 @@
  *********************************************************************/
 
 $(document).ready( function readyFunction() {
+	// Define functions for doing things
+	function align(id, fromBox, toBox) {
+		return function() {
+			// get line number from end of id attribute
+			var n = $(this).attr("id").split("-").pop();
+
+			// select the corresponding element
+			var $match = $(id + n);
+			var toTop = $match.position().top;
+			var fromTop = $(this).position().top;
+
+			// Make sure top of selected assembly block is in the frame
+			if (fromTop < 0 || $(this).height() > $(fromBox).height()) {
+				$(fromBox).animate({
+					scrollTop: $(fromBox).scrollTop() + fromTop
+				});
+
+				fromTop = 0;
+			}
+			// Make sure bottom of assembly block is in the frame
+			else if (fromTop + $(this).height() > $(fromBox).height()) {
+
+				$(fromBox).animate({
+					scrollTop: $(fromBox).scrollTop() + (fromTop + $(this).height() - $(fromBox).height())
+				});
+
+				fromTop = $(fromBox).height() - $(this).height();
+			}
+
+			// calculate current position of c line relative to corresponding block
+			var rel = toTop - fromTop;
+
+			// incorporate current value of scrollTop to get new scroll
+			var scroll = $(toBox).scrollTop() + rel;
+
+			// highlight clicked element and match, scroll to new position
+			highlight($(this));
+			$(toBox).animate( { scrollTop: scroll }, 500);
+			highlight($match);
+		}
+	}
+
+	function highlight($el) {
+		// Add and remove border
+		$el.css('border', 'solid 1px black');
+		$el.animate( { 'border-width' : 0 }, 1000);
+	}
+
 	// Handle file uploads
 	$('.inputfile').change(function autoSubmit() {
 		// Flash "compiling..." message while server-side runs
@@ -72,50 +120,3 @@ $(document).ready( function readyFunction() {
 
 	});
 });
-
-function align(id, fromBox, toBox) {
-	return function() {
-		// get line number from end of id attribute
-		var n = $(this).attr("id").split("-").pop();
-
-		// select the corresponding element
-		var $match = $(id + n);
-		var toTop = $match.position().top;
-		var fromTop = $(this).position().top;
-
-		// Make sure top of selected assembly block is in the frame
-		if (fromTop < 0 || $(this).height() > $(fromBox).height()) {
-			$(fromBox).animate({
-				scrollTop: $(fromBox).scrollTop() + fromTop
-			});
-
-			fromTop = 0;
-		}
-		// Make sure bottom of assembly block is in the frame
-		else if (fromTop + $(this).height() > $(fromBox).height()) {
-
-			$(fromBox).animate({
-				scrollTop: $(fromBox).scrollTop() + (fromTop + $(this).height() - $(fromBox).height())
-			});
-
-			fromTop = $(fromBox).height() - $(this).height();
-		}
-
-		// calculate current position of c line relative to corresponding block
-		var rel = toTop - fromTop;
-
-		// incorporate current value of scrollTop to get new scroll
-		var scroll = $(toBox).scrollTop() + rel;
-
-		// highlight clicked element and match, scroll to new position
-		highlight($(this));
-		$(toBox).animate( { scrollTop: scroll }, 500);
-		highlight($match);
-	}
-}
-
-function highlight($el) {
-	// Add and remove border
-	$el.css('border', 'solid 1px black');
-	$el.animate( { 'border-width' : 0 }, 1000);
-}
