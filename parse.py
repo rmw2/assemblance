@@ -57,10 +57,22 @@ tooltip = """
 
 location = """
     <div class="tt">
-        <span class="tt-title">{entry[name]}</span>:
-        <span class="tt-type"> {entry[type]} </span>
-        (declared line <span class="tt-linum">{entry[line]}</span>)
+        <div class="tt-left">
+            <span class="tt-title">{entry[name]}</span>
+        </div>
+        <div class="tt-right">
+            <span class="tt-type"> {entry[type]} </span>
+            <span class="tt-linum">(decl. line {entry[line]})</span>
+        </div>
     </div>
+"""
+
+linelabel = """
+    <div class="line-label">(line {})</div>
+"""
+
+colordiv = """
+    <div id="for-line-{}" class="loc color-{}">
 """
 
 # Format string for a classed div
@@ -165,8 +177,9 @@ def process_asm(asm):
             markup += '</div><!-- /.loc -->\n'
 
             # open new div of appropriate color class
-            markup += '''<div id="for-line-{}" class="loc color-{}">
-            '''.format(cline, colors[cline])
+            markup += colordiv.format(cline, colors[cline])
+            # add label for the line
+            markup += linelabel.format(cline)
 
             # don't actually output the text of the line
             continue
@@ -271,7 +284,7 @@ def process_operand(token):
 
     # do lookup in address table and add location tooltip to markup
     try:
-        entry = g.locs[g.fnc].get(query.rstrip(','), None)
+        entry = g.locs[g.fnc].get(token.rstrip(','), None)
         if entry is not None:
             cx += location.format(entry=entry)
         elif g.debug:

@@ -15,6 +15,8 @@ ARR_TAG = 'DW_TAG_array_type'
 STC_TAG = 'DW_TAG_structure_type'
 ENM_TAG = 'DW_TAG_enumeration_type'
 
+TYPES = (TYP_TAG, ARR_TAG, PTR_TAG, ENM_TAG, STC_TAG)
+
 # Relevant attributes
 LOC  = 'DW_AT_location'
 TYPE = 'DW_AT_type'
@@ -113,14 +115,6 @@ def find_variables(stream):
             name = parse_type(die.attributes[NAME])
             offset = die.offset
             types[offset] = name
-
-        elif die.tag == ENM_TAG:
-            # Lookup base type and add to dictionary
-            pass
-
-        elif die.tag == DEF_TAG:
-            # Lookup defined tag and add to dictionary
-            pass
 
     # Turn type references into actual types
     for fcn in symbols:

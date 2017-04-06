@@ -16,9 +16,10 @@ from elftools.elf.elffile import ELFFile
 from uuid import uuid4
 
 # Intialize Application
-app = Flask(__name__)
 ALLOWED_EXTENSIONS = ['c']
 UPLOADS_FOLDER = 'uploads'
+
+app = Flask(__name__)
 app.config['UPLOADS_FOLDER'] = UPLOADS_FOLDER
 
 XGCC = '/usr/local/gcc-4.8.1-for-linux64/bin/x86_64-pc-linux-gcc'
@@ -149,4 +150,12 @@ def clean(response):
     return response
 
 def clean_all():
-    for dir in
+    """ Cleanup on startup.
+    """
+    for d in os.listdir(UPLOADS_FOLDER):
+        if os.path.isdir(os.path.join(UPLOADS_FOLDER, d)):
+            print('\tCleaning directory for session: %s', d)
+            shutil.rmtree(os.path.join(UPLOADS_FOLDER, d))
+
+# Run after loading module but before handling requests
+clean_all()

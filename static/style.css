@@ -27,6 +27,10 @@ pre {
 	overflow: hidden;
 }
 
+/**********************************************************************
+ * container styles
+ *********************************************************************/
+
 #source {
 	background-color: #DDD;
 	padding: 10pt;
@@ -53,7 +57,6 @@ pre {
 		color-stop(0.95,  rgba(0,0,0,1)),
 		color-stop(1.00,  rgba(0,0,0,0)));
 }
-
 
 #source-code {
 	border: solid 1px #EFEFEF;
@@ -105,115 +108,9 @@ pre {
 	overflow-y: scroll;
 }
 
-.asm-line, .src-line {
-	padding: 2pt 5pt 2pt 5pt;
-	display: block;
-}
-
-.src-line {
-	overflow: hidden;
-}
-
-.asm-token {
-	/*padding: 0 5pt 0 5pt;*/
-	display: inline-block;
-	width: 21%;
-}
-
-.asm-no {
-	padding: 0 5pt 0 0;
-	display: inline-block;
-	width: 6%;
-}
-
-.asm-mnemonic {
-	font-weight: bold;
-}
-
-.token-text {
-	border-radius: 5px;
-	white-space: nowrap;
-	padding: 0 5pt 0 5pt;
-}
-
-.asm-token:hover .token-text {
-	background-color: #DDD;
-}
-
-.asm-label{
-	font-style: italic;
-	color: #8b7355;
-}
-
-.tt {
-	visibility: hidden;
-	position: absolute;
-	text-align: left;
-
-	width: 300px;
-	padding: 10px;
-	border-radius: 5px;
-
-	font-family: sans-serif;
-
-	background-color: rgba(0,0,0,0.9);
-	box-shadow: 3px 3px 2px #888;
-	color: #FFF;
-
-	right: 105%;
-	top: 0;
-	z-index: 1;
-}
-
-.wrapper {
-	position: relative;
-}
-
-.asm-token:hover .tt {
-	visibility: visible;
-}
-
-.tt-row {
-	display: block;
-}
-
-.tt-title {
-	font-weight: bold;
-	color: red;
-	display: inline-block;
-}
-
-.tt-syn {
-	font-style: italic;
-	display: inline-block;
-	float: right;
-}
-
-.tt-mnem {
-	font-style: normal;
-	font-family: Monospace;
-	display: inline-block;
-}
-
-.tt-desc {
-	white-space: pre-wrap;
-}
-
-.tt-code {
-	font-family: Monospace;
-	padding: 0 0 0 10pt;
-}
-
-.c-line {
-	display: inline-block;
-	width: 90%;
-	white-space: pre;
-}
-
-.c-no {
-	display: inline-block;
-	width: 4%;
-}
+/**********************************************************************
+ * generic ui item styles
+ *********************************************************************/
 
 .flash {
 	border-radius: 10px;
@@ -267,6 +164,153 @@ pre {
 	position: absolute;
 	z-index: -1;
 }
+
+/**********************************************************************
+ * code entity styles
+ *********************************************************************/
+
+.asm-line, .src-line {
+	padding: 2pt 5pt 2pt 5pt;
+	display: block;
+}
+
+.asm-token {
+	/*padding: 0 5pt 0 5pt;*/
+	display: inline-block;
+	width: 21%;
+}
+
+.asm-no {
+	padding: 0 5pt 0 0;
+	display: inline-block;
+	width: 6%;
+}
+
+.asm-mnemonic {
+	font-weight: bold;
+}
+
+.token-text {
+	border-radius: 5px;
+	white-space: nowrap;
+	padding: 0 5pt 0 5pt;
+}
+
+.asm-token:hover .token-text {
+	background-color: #DDD;
+}
+
+.asm-label{
+	font-style: italic;
+	color: #8b7355;
+}
+
+.src-line {
+	overflow: hidden;
+}
+
+.c-line {
+	display: inline-block;
+	width: 90%;
+	white-space: pre;
+}
+
+.c-no {
+	display: inline-block;
+	width: 4%;
+}
+
+.line-label {
+	float: right;
+	padding: 2pt 5pt 2pt 5pt;
+
+	font-style: italic;
+	font-size: 10pt;
+	color: gray;
+}
+
+/**********************************************************************
+ * tooltip styles
+ *********************************************************************/
+
+.tt {
+	visibility: hidden;
+	position: absolute;
+	text-align: left;
+
+	width: 300px;
+	padding: 10px;
+	border-radius: 5px;
+
+	font-family: sans-serif;
+
+	background-color: rgba(0,0,0,0.9);
+	box-shadow: 3px 3px 2px #888;
+	color: #FFF;
+
+	right: 105%;
+	top: 0;
+	z-index: 1;
+}
+
+.wrapper {
+	position: relative;
+}
+
+.asm-token:hover .tt {
+	visibility: visible;
+}
+
+.tt-row {
+	display: block;
+}
+
+.tt-left {
+	float: left;
+}
+
+.tt-right {
+	float: right;
+}
+
+.tt-title {
+	font-weight: bold;
+	color: red;
+	display: inline-block;
+}
+
+.tt-syn {
+	font-style: italic;
+	display: inline-block;
+	float: right;
+}
+
+.tt-mnem {
+	font-style: normal;
+	font-family: Monospace;
+	display: inline-block;
+}
+
+.tt-desc {
+	white-space: pre-wrap;
+}
+
+.tt-code {
+	font-family: Monospace;
+	padding: 0 0 0 10pt;
+}
+
+.tt-type {
+
+}
+
+.tt-linum {
+	font-style: italic;
+}
+
+/**********************************************************************
+ * color block styles
+ *********************************************************************/
 
 .loc {
 	border-radius: 5px;
@@ -323,15 +367,15 @@ pre {
  * Source token highlighting
  *********************************************************************/
 
-.c-token-hll { background-color: #ffffcc }
-.c-token-c { color: #408080; font-style: italic } /* Comment */
-.c-token-err { border: 1px solid #FF0000 } /* Error */
-.c-token-k { color: #008000; font-weight: bold } /* Keyword */
-.c-token-o { color: #666666 } /* Operator */
+.c-token-hll{ background-color: #ffffcc }
+.c-token-c 	{ color: #408080; font-style: italic } /* Comment */
+/*.c-token-err { border: 1px solid #FF0000 } /* Error *//**/
+.c-token-k 	{ color: #008000; font-weight: bold } /* Keyword */
+.c-token-o 	{ color: #666666 } /* Operator */
 .c-token-ch { color: #408080; font-style: italic } /* Comment.Hashbang */
 .c-token-cm { color: #408080; font-style: italic } /* Comment.Multiline */
 .c-token-cp { color: #BC7A00 } /* Comment.Preproc */
-.c-token-cpf { color: #408080; font-style: italic } /* Comment.PreprocFile */
+.c-token-cpf{ color: #408080; font-style: italic } /* Comment.PreprocFile */
 .c-token-c1 { color: #408080; font-style: italic } /* Comment.Single */
 .c-token-cs { color: #408080; font-style: italic } /* Comment.Special */
 .c-token-kc { color: #008000; font-weight: bold } /* Keyword.Constant */
@@ -340,8 +384,8 @@ pre {
 .c-token-kp { color: #008000 } /* Keyword.Pseudo */
 .c-token-kr { color: #008000; font-weight: bold } /* Keyword.Reserved */
 .c-token-kt { color: #B00040 } /* Keyword.Type */
-.c-token-m { color: #666666 } /* Literal.Number */
-.c-token-s { color: #BA2121 } /* Literal.String */
+.c-token-m 	{ color: #666666 } /* Literal.Number */
+.c-token-s 	{ color: #BA2121 } /* Literal.String */
 .c-token-na { color: #7D9029 } /* Name.Attribute */
 .c-token-nb { color: #008000 } /* Name.Builtin */
 .c-token-nc { color: #0000FF; font-weight: bold } /* Name.Class */
