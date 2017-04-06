@@ -3,7 +3,7 @@ Main file for handling server requests.
 """
 
 # web packages
-from flask import Flask, request, flash, redirect, render_template, session
+from flask import Flask, request, flash, redirect, render_template, session, g
 from werkzeug.utils import secure_filename
 
 # project files
@@ -87,6 +87,7 @@ def index():
     """ Index: serve the homepage and handle file uploads.
     Issue-- this currently re-renders the entire template every time...
     """
+    g.debug = True
 
     # Manage session variables
     if 'uid' not in session:
@@ -104,7 +105,11 @@ def index():
                 return redirect(request.url)
 
             # Parse ELF
-            try: locs = parse_elf(ofile, asm)
+            try:
+                g.locs = parse_elf(ofile, asm)
+                if g.debug:
+                    from pprint import pprint
+                    pprint(g.locs)
             except:
                 # Clean up in case of crash
                 ofile.close()
@@ -142,3 +147,6 @@ def clean(response):
         shutil.rmtree(os.path.join(UPLOADS_FOLDER, session['uid']))
 
     return response
+
+def clean_all():
+    for dir in

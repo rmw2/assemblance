@@ -9,6 +9,8 @@ A module for parsing assembly language to identify mnemonics, labels, sections, 
 
 import re, json
 from pygments import highlight
+from flask import g
+
 #**********************************************************************
 # Module constants
 #**********************************************************************
@@ -51,6 +53,14 @@ tooltip = """
             <span class="tt-flags"> {entry[flags]} </span>
         </div>
     </div><!-- /.tt -->
+"""
+
+location = """
+    <div class="tt">
+        <span class="tt-title">{entry[name]}</span>:
+        <span class="tt-type"> {entry[type]} </span>
+        (declared line <span class="tt-linum">{entry[line]}</span>)
+    </div>
 """
 
 # Format string for a classed div
@@ -102,43 +112,12 @@ def handle_mnemonic(token, cl):
     return div.format(d="", cl="asm-mnemonic asm-token", cx=cx)
 
 
-
 def wrap_token(token, cl):
     """ Process an token in assembly and return the default formatting.
     """
     inner = span.format(cl="token-text", cx=token)
     return div.format(d="", cl=cl, cx=inner)
 
-# #**********************************************************************
-# # Assembly regular expressions and token formatting handlers
-# #**********************************************************************
-
-# symbol = '([a-zA-Z.][\w.]*)|(\"[\w\s.]+\")*'
-
-# # Regular expressions for different assembly tokens
-# regexp = {
-#    'register'   :   re.compile('%\w\w\w?'),
-#    'address'    :   re.compile('(\$[.\w]*)?\((%\w\w\w?)?,(%\w\w\w?)?(,($2,$4,$8))\)?')
-# #   'immediate' :   re.compile('\$' + symbol),
-# #   'label'     :   re.compile(symbol + ':'),
-# #   'section'   :   re.compile('\.' + symbol),
-# }
-
-# # Handlers for different assembly tokens
-# handlers = {
-#     'register'  :   wrap_token,
-#     'address'   :   wrap_token,
-# #   'label'     :   wrap_token,
-# #   'section'   :   wrap_token,
-#     'mnemonic'  :   handle_mnemonic
-# }
-
-
-"""
-Tokens available:
-    0   label, mnemonic, directive
-    1-3 label, immediate, register, addressing, directive
-"""
 
 #**********************************************************************
 # Main processing functions
@@ -159,6 +138,8 @@ def process_asm(asm):
     # Keep track of blocks and lines of assembly
     blocknum = 0
     asmline = 0
+
+    g.fnc = None
 
     # Iterate over each line
     for line in asm:
@@ -202,6 +183,10 @@ def process_asm(asm):
 
         if len(tokens) > 1 and '.debug_info' in tokens[1]:
             break
+
+        if '@function' in tokens:
+            # get current function name
+            g.fnc = tokens[1][:-1]
 
         # output line number
         asmline += 1
@@ -273,7 +258,6 @@ srclexer = get_lexer_by_name('c')
 oplexer = OpLexer(stripall=True)
 opformatter = DivFormatter(cssclass="operand-text", classprefix="token-op-", spanwrap=True)
 
-
 def process_operand(token):
     """ Handle the markup for the subsequent tokens in a line.
     Can be a directive, register, addressing mode, .
@@ -286,8 +270,15 @@ def process_operand(token):
     cx = highlight(token, oplexer, opformatter)
 
     # do lookup in address table and add location tooltip to markup
-    # entry = locs[opt][]
-    # cx += location.format(entry)
+    try:
+        entry = g.locs[g.fnc].get(query.rstrip(','), None)
+        if entry is not None:
+            cx += location.format(entry=entry)
+        elif g.debug:
+            print('%s: %s not found' % (g.fnc, token))
+
+    except KeyError as e:
+        raise
 
     return wrap_token(cx, cl)
 

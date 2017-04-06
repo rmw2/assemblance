@@ -7,7 +7,7 @@ Handle parsing of the DWARF DIE tree and locating variables
 # Relevant tags
 FCN_TAG = 'DW_TAG_subprogram'
 VAR_TAG = 'DW_TAG_variable'
-PAR_TAG = 'DW_TAG_formal_paramater'
+PAR_TAG = 'DW_TAG_formal_parameter'
 TYP_TAG = 'DW_TAG_base_type'
 DEF_TAG = 'DW_TAG_typedef'
 PTR_TAG = 'DW_TAG_pointer_type'
@@ -37,6 +37,8 @@ regs = [    # Register names in order
 ]
 
 from elftools.elf.elffile import ELFFile
+from flask import g
+from pprint import pprint
 
 def get_leb128(leb, signed=True):
     """ Decode a LEB128 signed integer represented as a list of bytes.
@@ -88,7 +90,11 @@ def find_variables(stream):
 
             # Iterate over function's children
             for child in die.iter_children():
-                if child.tag == VAR_TAG:
+                if g.debug:
+                    print(child.tag)
+                if child.tag == VAR_TAG or child.tag == PAR_TAG:
+                    if g.debug:
+                        print(child)
                     # Get variable name, type, and locations
                     name = parse_name(child.attributes[NAME])
                     typ = parse_type(child.attributes[TYPE])
@@ -124,6 +130,9 @@ def find_variables(stream):
                 symbols[fcn][name]['type'] = types[symbols[fcn][name]['type']]
             except KeyError:
                 pass
+
+    if g.debug:
+        pprint(symbols)
 
     return symbols
 
@@ -228,7 +237,6 @@ def parse_elf(stream, asm):
 
 if __name__ == "__main__":
     from elftools.elf.elffile import ELFFile
-    from pprint import pprint
     import sys
 
     # Process each file
