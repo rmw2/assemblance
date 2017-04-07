@@ -7,9 +7,12 @@ A module for parsing assembly language to identify mnemonics, labels, sections, 
 @date: March 2017
 """
 
+from flask import g
 import re, json
 from pygments import highlight
-from flask import g
+from pygments.lexers import get_lexer_by_name
+from format import DivFormatter, OpLexer
+
 
 #**********************************************************************
 # Module constants
@@ -84,6 +87,24 @@ div = """
 span = """
     <span class="{cl}">{cx}</span>
 """
+
+#**********************************************************************
+# lexers and formatters
+#**********************************************************************
+
+srclexer = get_lexer_by_name('c')
+oplexer = OpLexer(stripall=True)
+
+srcfmtr = DivFormatter(
+    cssclass='c-line',
+    classprefix='c-token-'
+)
+
+opformatter = DivFormatter(
+    cssclass="operand-text",
+    classprefix="token-op-",
+    spanwrap=True
+)
 
 #**********************************************************************
 # Markup format functions
@@ -262,14 +283,6 @@ def process_tokens(tokens):
         markup += wrap_token(token, 'asm-token')
 
     return markup
-
-from format import DivFormatter, OpLexer
-srcfmtr = DivFormatter(cssclass='c-line', classprefix='c-token-')
-from pygments.lexers import get_lexer_by_name
-srclexer = get_lexer_by_name('c')
-
-oplexer = OpLexer(stripall=True)
-opformatter = DivFormatter(cssclass="operand-text", classprefix="token-op-", spanwrap=True)
 
 def process_operand(token):
     """ Handle the markup for the subsequent tokens in a line.

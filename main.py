@@ -27,57 +27,6 @@ XGCC = '/usr/local/gcc-4.8.1-for-linux64/bin/x86_64-pc-linux-gcc'
 # Secret key to maintain sessions
 app.secret_key = 'not so secret'
 
-#**********************************************************************
-# Utility functions
-#**********************************************************************
-
-def allowed_file(filename):
-    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
-
-def run_gcc(file, gcc=XGCC):
-    """ Open, read, and save a c program represented as the object file.
-    Compile with -g both to assembly and object code.
-    Return src as a list of lines of C, asm as a list of lines in assembly,
-    and ofile as an open stream for the object code file.
-    """
-
-    # Decode source text
-    src = [line.decode('UTF-8') for line in file.readlines()]
-
-    # Save text of source file to uploads folder
-    filename = secure_filename(file.filename)
-    prefix = os.path.join(UPLOADS_FOLDER, session['uid'])
-
-    # Create folder if necessary
-    if not os.path.isdir(prefix):
-        os.mkdir(prefix)
-
-    # Save to newly created folder
-    filepath = os.path.join(prefix, filename)
-    with open(filepath, 'w') as cfile:
-        cfile.write(''.join(src))
-
-    # Locations for new files
-    sfilepath = os.path.join(prefix, filename[:-2] + '.s')
-    ofilepath = os.path.join(prefix, filename[:-2] + '.o')
-
-    # Compile source to assembly and ELF
-    pres1 = subprocess.call([gcc, '-g', '-S', filepath, '-o', sfilepath])
-    pres2 = subprocess.call([gcc, '-g', '-c', filepath, '-o', ofilepath])
-
-    # Check for compilation errors
-    if pres1 != 0 or pres2 != 0:
-        raise RuntimeError('Compilation Failed')
-
-    # Load assembly line-by-line into list
-    with open(sfilepath, 'r') as sfile:
-        asm = [line for line in sfile.readlines()]
-
-    # open file stream for object code
-    ofile = open(ofilepath, 'rb')
-
-    return src, asm, ofile
-
 
 #**********************************************************************
 # Request functions
@@ -159,3 +108,54 @@ def clean_all():
 
 # Run after loading module but before handling requests
 clean_all()
+
+#**********************************************************************
+# Utility functions
+#**********************************************************************
+
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+def run_gcc(file, gcc=XGCC):
+    """ Open, read, and save a c program represented as the object file.
+    Compile with -g both to assembly and object code.
+    Return src as a list of lines of C, asm as a list of lines in assembly,
+    and ofile as an open stream for the object code file.
+    """
+
+    # Decode source text
+    src = [line.decode('UTF-8') for line in file.readlines()]
+
+    # Save text of source file to uploads folder
+    filename = secure_filename(file.filename)
+    prefix = os.path.join(UPLOADS_FOLDER, session['uid'])
+
+    # Create folder if necessary
+    if not os.path.isdir(prefix):
+        os.mkdir(prefix)
+
+    # Save to newly created folder
+    filepath = os.path.join(prefix, filename)
+    with open(filepath, 'w') as cfile:
+        cfile.write(''.join(src))
+
+    # Locations for new files
+    sfilepath = os.path.join(prefix, filename[:-2] + '.s')
+    ofilepath = os.path.join(prefix, filename[:-2] + '.o')
+
+    # Compile source to assembly and ELF
+    pres1 = subprocess.call([gcc, '-g', '-S', filepath, '-o', sfilepath])
+    pres2 = subprocess.call([gcc, '-g', '-c', filepath, '-o', ofilepath])
+
+    # Check for compilation errors
+    if pres1 != 0 or pres2 != 0:
+        raise RuntimeError('Compilation Failed')
+
+    # Load assembly line-by-line into list
+    with open(sfilepath, 'r') as sfile:
+        asm = [line for line in sfile.readlines()]
+
+    # open file stream for object code
+    ofile = open(ofilepath, 'rb')
+
+    return src, asm, ofile

@@ -88,6 +88,31 @@ $(document).ready( function readyFunction() {
 	    });
 	});
 
+	$('.asm-operand').mouseover( function tooltip() {
+		// Get current item and relatively positioned wrapper
+		var $item = $(this),
+			$tooltip = $(" .tt", $item),
+			pos = $item.position();
+
+		// Calculate new position for tooltip
+		var top = pos.top,
+			left = pos.left;
+
+		// Require that tooltip render in window (vertical alignment)
+		if (top + $tooltip.height() > $("#asm-code").height()) {
+			top = $("#asm-code").height() - $tooltip.height();
+		}
+
+		// Align horizontally
+		left = left - $tooltip.width() - $item.width() / 2;
+
+		// Set position of tooltip
+	    $tooltip.css({
+	     	'top': 		top,
+	    	'left': 	left
+	    });
+	});
+
 	// Handle alignment of corresponding divs
 	$('div[id^="src-line-"]').click(
 		align("#for-line-", "#source-code", "#asm-code")

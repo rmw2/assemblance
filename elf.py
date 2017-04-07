@@ -228,7 +228,6 @@ def parse_elf(stream, asm):
 
     return locs
 
-
 if __name__ == "__main__":
     from elftools.elf.elffile import ELFFile
     import sys
