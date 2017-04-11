@@ -66,7 +66,7 @@ $(document).ready( function readyFunction() {
 	$('.asm-mnemonic').mouseover( function tooltip() {
 		// Get current item and relatively positioned wrapper
 		var $item = $(this),
-			$tooltip = $("> .tt", $item),
+			$tooltip = $("> .m-tt", $item),
 			pos = $item.position();
 
 		// Calculate new position for tooltip
@@ -91,7 +91,7 @@ $(document).ready( function readyFunction() {
 	$('.asm-operand').mouseover( function tooltip() {
 		// Get current item and relatively positioned wrapper
 		var $item = $(this),
-			$tooltip = $(" .tt", $item),
+			$tooltip = $(" .v-tt", $item),
 			pos = $item.position();
 
 		// Calculate new position for tooltip

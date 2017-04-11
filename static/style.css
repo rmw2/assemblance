@@ -233,7 +233,7 @@ pre {
  * tooltip styles
  *********************************************************************/
 
-.tt {
+.m-tt, .v-tt {
 	visibility: hidden;
 	position: absolute;
 	text-align: left;
@@ -250,14 +250,18 @@ pre {
 
 	right: 105%;
 	top: 0;
-	z-index: 1;
+	z-index: 2;
+}
+
+.v-tt {
+	min-width: 200px;
 }
 
 .wrapper {
 	position: relative;
 }
 
-.asm-token:hover .tt {
+.asm-token:hover .m-tt, .asm-token:hover .v-tt {
 	visibility: visible;
 }
 
@@ -289,6 +293,13 @@ pre {
 	font-style: normal;
 	font-family: Monospace;
 	display: inline-block;
+	white-space: pre;
+}
+
+.tt-type {
+	font-family: Monospace;
+	font-weight: bold;
+	color: #c79eed;
 }
 
 .tt-desc {
@@ -298,10 +309,6 @@ pre {
 .tt-code {
 	font-family: Monospace;
 	padding: 0 0 0 10pt;
-}
-
-.tt-type {
-
 }
 
 .tt-linum {

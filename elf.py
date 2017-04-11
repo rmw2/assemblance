@@ -4,6 +4,20 @@ elf.py
 Handle parsing of the DWARF DIE tree and locating variables
 """
 
+class Object():
+    """ Hack for running main method outside of flask. """
+    pass
+
+from elftools.elf.elffile import ELFFile
+if __name__ != "__main__":
+    from flask import g
+else:
+    # Fake flask global object to give debugging flag
+    g = Object()
+    g.debug = True
+
+from pprint import pprint
+
 # Relevant tags
 FCN_TAG = 'DW_TAG_subprogram'
 VAR_TAG = 'DW_TAG_variable'
@@ -15,7 +29,12 @@ ARR_TAG = 'DW_TAG_array_type'
 STC_TAG = 'DW_TAG_structure_type'
 ENM_TAG = 'DW_TAG_enumeration_type'
 
-TYPES = (TYP_TAG, ARR_TAG, PTR_TAG, ENM_TAG, STC_TAG)
+TYPES = (TYP_TAG, ARR_TAG, PTR_TAG, ENM_TAG, STC_TAG, DEF_TAG)
+
+ENGLISH = {
+    VAR_TAG: 'local variable',
+    PAR_TAG: 'parameter'
+}
 
 # Relevant attributes
 LOC  = 'DW_AT_location'
@@ -38,9 +57,6 @@ regs = [    # Register names in order
     'r12', 'r14', 'r14', 'r15'
 ]
 
-from elftools.elf.elffile import ELFFile
-from flask import g
-from pprint import pprint
 
 def get_leb128(leb, signed=True):
     """ Decode a LEB128 signed integer represented as a list of bytes.
@@ -77,6 +93,9 @@ def find_variables(stream):
     for die in root.iter_children():
         # Walk through top level children, includes functions and types
         if die.tag == FCN_TAG:
+            if g.debug:
+                print('(func) %d: %s' % (die.offset, die.tag))
+
             # Handle function, descend
             fcn = parse_name(die.attributes[NAME])
 
@@ -93,10 +112,8 @@ def find_variables(stream):
             # Iterate over function's children
             for child in die.iter_children():
                 if g.debug:
-                    print(child.tag)
+                    print('(var)  %d: %s' % (child.offset, child.tag))
                 if child.tag == VAR_TAG or child.tag == PAR_TAG:
-                    if g.debug:
-                        print(child)
                     # Get variable name, type, and locations
                     name = parse_name(child.attributes[NAME])
                     typ = parse_type(child.attributes[TYPE])
@@ -107,25 +124,48 @@ def find_variables(stream):
                     symbols[fcn][name] = {
                         'type'  : typ,
                         'line'  : line,
-                        'loc'   : loc
+                        'loc'   : loc,
+                        'role'  : ENGLISH[child.tag]
                     }
 
-        elif die.tag == TYP_TAG:
-            # Add type to dictionary
-            name = parse_type(die.attributes[NAME])
-            offset = die.offset
-            types[offset] = name
+        elif die.tag in TYPES:
+            if g.debug:
+                print('(type) %d: %s' % (die.offset, die.tag))
+
+            if die.tag == DEF_TAG:
+                print(die)
+
+            # regular types entries with a name
+            try: name = parse_type(die.attributes[NAME])
+            # no name, not relevant
+            except: name = ''
+            # pointer types and typedefs have another reference
+            try: ref = parse_type(die.attributes[TYPE])
+            # no ref, no worries
+            except: ref = 0
+
+            # Save in types dictionary by offset
+            types[die.offset] = {
+                'name'  :   name,
+                'tag'   :   die.tag,
+                'ref'   :   ref
+            }
+
+        elif g.debug:
+            print('(???)  %d: %s' % (die.offset, die.tag))
 
     # Turn type references into actual types
     for fcn in symbols:
         for name in symbols[fcn]:
             if "$" in name: continue
             try:
-                symbols[fcn][name]['type'] = types[symbols[fcn][name]['type']]
+                symbols[fcn][name]['type'] = resolve_type(types, symbols[fcn][name]['type'])
             except KeyError:
-                pass
+                if g.debug:
+                    print('Type %s not found in DIE tree' % symbols[fcn][name]['type'])
 
     if g.debug:
+        pprint(types)
         pprint(symbols)
 
     return symbols
@@ -164,6 +204,29 @@ def parse_location(loc):
         reg = regs[loc[0] - OP_BREG]
 
         return [offset, reg]
+
+def resolve_type(types, key):
+    """ Lookup a type in the dictionary generated from the
+    DWARF tree, taking account of pointers and enumerations
+    and return a string name of the type.
+    """
+    tag = types[key]['tag']
+    if tag == TYP_TAG:
+        # return name with trailing space
+        return types[key]['name'] + ' '
+    if tag == PTR_TAG:
+        newkey = types[key]['ref']
+        return resolve_type(types, newkey) + '*'
+    if tag == ARR_TAG:
+        newkey = types[key]['ref']
+        return resolve_type(types, newkey) + '[] '
+    if tag == ENM_TAG:
+        return 'enum ' + types[key]['name'] + ' '
+    if tag == DEF_TAG:
+        suffix = ' ({}) '.format(resolve_type(types, types[key]['ref']))
+        return types[key]['name'] + suffix
+
+    return tag
 
 def format_location(loc, offset):
     # Format string for indirect addressing
@@ -210,7 +273,8 @@ def find_locations(symbols, asm):
             locs[fcn][loc] = {
                 'name'  : sym,
                 'type'  : symbols[fcn][sym]['type'],
-                'line'  : symbols[fcn][sym]['line']
+                'line'  : symbols[fcn][sym]['line'],
+                'role'  : symbols[fcn][sym]['role']
             }
 
     return locs

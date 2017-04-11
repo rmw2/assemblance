@@ -13,7 +13,6 @@ from pygments import highlight
 from pygments.lexers import get_lexer_by_name
 from format import DivFormatter, OpLexer
 
-
 #**********************************************************************
 # Module constants
 #**********************************************************************
@@ -41,7 +40,7 @@ badlabel = re.compile('((.LF)|(.Ltemp)|(.Ltext)).*')
 
 # Format string for a mnemonic tooltip
 tooltip = """
-    <div class="tt">
+    <div class="m-tt">
         <div class="tt-row">
             <span class="tt-title"> {entry[name]} </span>
             <span class="tt-syn">
@@ -59,13 +58,15 @@ tooltip = """
 """
 
 location = """
-    <div class="tt">
-        <div class="tt-left">
-            <span class="tt-title">{entry[name]}</span>
+    <div class="v-tt">
+        <div class="tt-row">
+            <span class="tt-type">{entry[type]}</span>
+            <span class="tt-mnem">{entry[name]}</span>
+            <span class="tt-linum tt-right">(decl. line {entry[line]})</span>
         </div>
-        <div class="tt-right">
-            <span class="tt-type"> {entry[type]} </span>
-            <span class="tt-linum">(decl. line {entry[line]})</span>
+        <div class="tt-row">
+            <span class="tt-linum tt-left">{entry[role]} in </span>
+            <span class="tt-mnem">&nbsp;{fcn}()</span>
         </div>
     </div>
 """
@@ -220,7 +221,7 @@ def process_asm(asm):
 
         if '@function' in tokens:
             # get current function name
-            g.fnc = tokens[1][:-1]
+            g.fcn = tokens[1][:-1]
 
         # output line number
         asmline += 1
@@ -297,11 +298,11 @@ def process_operand(token):
 
     # do lookup in address table and add location tooltip to markup
     try:
-        entry = g.locs[g.fnc].get(token.rstrip(','), None)
+        entry = g.locs[g.fcn].get(token.rstrip(','), None)
         if entry is not None:
-            cx += location.format(entry=entry)
+            cx += location.format(entry=entry, fcn=g.fcn)
         elif g.debug:
-            print('%s: %s not found' % (g.fnc, token))
+            print('%s: %s not found' % (g.fcn, token))
 
     except KeyError as e:
         raise
@@ -322,11 +323,10 @@ def format_c(c, colors=[]):
         # 1-based line numbering
         l = i+1
 
-        # line = line.replace('<', '&lt;').replace('>', '&gt;')
-        # line = div.format(d="c-line-"+str(l), cl="c-line", cx=line)
-
         # syntax highlighting with pygments
         line = highlight(line, srclexer, srcfmtr)
+
+        # LOOK FOR THOSE DECLARATIONS
 
         # Number
         no = div.format(d="", cl="c-no", cx=l)
@@ -340,3 +340,13 @@ def format_c(c, colors=[]):
         markup += div.format(d="src-line-"+str(l), cl=cl, cx=no+line)
 
     return markup
+
+
+def annotate_declarations(markup):
+    """ Search markup for all the variable declarations predicted from
+    the locations dictionary.  Add a tooltip with the variable's location
+    as a child of the container for each declaration.
+    """
+
+    # Make the declaration dictionary
+    pass
