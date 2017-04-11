@@ -38,7 +38,6 @@ regs = [    # Register names in order
     'r12', 'r14', 'r14', 'r15'
 ]
 
-from main import app
 from elftools.elf.elffile import ELFFile
 from flask import g
 from pprint import pprint
@@ -93,10 +92,10 @@ def find_variables(stream):
 
             # Iterate over function's children
             for child in die.iter_children():
-                if app.debug:
+                if g.debug:
                     print(child.tag)
                 if child.tag == VAR_TAG or child.tag == PAR_TAG:
-                    if app.debug:
+                    if g.debug:
                         print(child)
                     # Get variable name, type, and locations
                     name = parse_name(child.attributes[NAME])
@@ -126,7 +125,7 @@ def find_variables(stream):
             except KeyError:
                 pass
 
-    if app.debug:
+    if g.debug:
         pprint(symbols)
 
     return symbols

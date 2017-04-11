@@ -37,7 +37,7 @@ def index():
     """ Index: serve the homepage and handle file uploads.
     Issue-- this currently re-renders the entire template every time...
     """
-    app.debug = True
+    g.debug = True
 
     # Manage session variables
     if 'uid' not in session:
