@@ -14,6 +14,7 @@ from pygments import highlight
 from pygments.lexers import get_lexer_by_name
 from format import DivFormatter, OpLexer
 
+
 #**********************************************************************
 # Module constants
 #**********************************************************************
