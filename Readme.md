@@ -42,11 +42,11 @@ Special thanks to Bob Dondero for his advising during this project, and the x86-
   - formal parameters and local variables only
   - tooltip includes type and declaration line (only works for base types, still need to add support for enums, typedefs, pointer types/arrays etc.)
 * (4/6) Automatically clean uploads folder on startup
+* (4/11) Added support for pointers, typedefs, and enumerations for variable tooltips
 
 ## TODO
 * Finish variable name / memory address correspondance
   - Highlight declaration line in source on hover (with javascript, somehow encode declaration line in attributes for token? data-decl-line=$LINE)
-  - Resolve special types
   - Handle formatting with javascript
 * Improve aesthetics
   - scale font size to screen width
