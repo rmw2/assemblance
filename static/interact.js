@@ -1,8 +1,8 @@
 /**********************************************************************
- * upload.js
+ * interact.js
  * Author: Rob Whitaker
  *
- * Handle the file selection aspects of the application
+ * Handle interaction with the user interface
  *********************************************************************/
 
 $(document).ready( function readyFunction() {

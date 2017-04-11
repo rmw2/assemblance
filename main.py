@@ -37,7 +37,7 @@ def index():
     """ Index: serve the homepage and handle file uploads.
     Issue-- this currently re-renders the entire template every time...
     """
-    g.debug = True
+    app.debug = True
 
     # Manage session variables
     if 'uid' not in session:
@@ -57,7 +57,7 @@ def index():
             # Parse ELF
             try:
                 g.locs = parse_elf(ofile, asm)
-                if g.debug:
+                if app.debug:
                     from pprint import pprint
                     pprint(g.locs)
             except:
@@ -116,7 +116,7 @@ clean_all()
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
-def run_gcc(file, gcc=XGCC):
+def run_gcc(file, opt='-O0', gcc=XGCC):
     """ Open, read, and save a c program represented as the object file.
     Compile with -g both to assembly and object code.
     Return src as a list of lines of C, asm as a list of lines in assembly,
@@ -144,8 +144,8 @@ def run_gcc(file, gcc=XGCC):
     ofilepath = os.path.join(prefix, filename[:-2] + '.o')
 
     # Compile source to assembly and ELF
-    pres1 = subprocess.call([gcc, '-g', '-S', filepath, '-o', sfilepath])
-    pres2 = subprocess.call([gcc, '-g', '-c', filepath, '-o', ofilepath])
+    pres1 = subprocess.call([gcc, '-g', '-S', opt, filepath, '-o', sfilepath])
+    pres2 = subprocess.call([gcc, '-g', '-c', opt, filepath, '-o', ofilepath])
 
     # Check for compilation errors
     if pres1 != 0 or pres2 != 0:
