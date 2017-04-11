@@ -8,6 +8,7 @@ A module for parsing assembly language to identify mnemonics, labels, sections, 
 """
 
 from flask import g
+from main import app
 import re, json
 from pygments import highlight
 from pygments.lexers import get_lexer_by_name
@@ -299,7 +300,7 @@ def process_operand(token):
         entry = g.locs[g.fnc].get(token.rstrip(','), None)
         if entry is not None:
             cx += location.format(entry=entry)
-        elif g.debug:
+        elif app.debug:
             print('%s: %s not found' % (g.fnc, token))
 
     except KeyError as e:
