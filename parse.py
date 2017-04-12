@@ -349,4 +349,8 @@ def annotate_declarations(markup):
     """
 
     # Make the declaration dictionary
+
+    # Search the markup for the appropriate declarations
+
+    # Could use the
     pass
