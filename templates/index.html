@@ -4,9 +4,11 @@
 	<title>assemblance</title>
 
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 	<link href="https://fonts.googleapis.com/css?family=Josefin+Sans" rel="stylesheet">
 	<link rel="stylesheet" href={{url_for('static', filename='style.css')}} >
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+
 	<script type="text/javascript" src={{url_for('static', filename="interact.js") }}></script>
 
 </head>
@@ -43,7 +45,7 @@
 		<!-- left column of the page -->
 		<div class="col-sm-6" id="source">
 			<div class="tools">
-			<form method="post" enctype="multipart/form-data">
+			<form id="file-form" method="post" enctype="multipart/form-data">
 				<span class="label-header"> source </span>
 				<input type="file" class="inputfile" id="upload-src" name="srcfile">
 				<label class="label-button" for="upload-src"> upload file </label>
@@ -66,6 +68,23 @@
 			<div class="tools">
 			<!--<form method="post" enctype="multipart/form-data">-->
 				<span class="label-header"> assembly </span>
+				<!-- optimization level select -->
+				<form id="opt-form" enctype="multipart/form-data">
+					<div id="opt-buttons" class="btn-group" data-toggle="buttons">
+					  <label class="btn btn-primary active">
+					    <input type="radio" name="options" value="-O0" id="O0" class="obutton" autocomplete="off" checked> -O0
+					  </label>
+					  <label class="btn btn-primary">
+					    <input type="radio" name="options" value="-O1" id="O1" class="obutton" autocomplete="off"> -O1
+					  </label>
+					  <label class="btn btn-primary">
+					    <input type="radio" name="options" value="-O2" id="O2" class="obutton" autocomplete="off"> -O2
+					  </label>
+					  <label class="btn btn-primary">
+					    <input type="radio" name="options" value="-O3" id="O3" class="obutton" autocomplete="off"> -O3
+					  </label>
+					</div>
+				</form>
 			<!--	<input type="file" class="inputfile" id="upload-asm" name="asmfile" ></button> -->
 			<!--	<label class="label-button" for="upload-asm"> upload file </label> -->
 				<div class="clear"></div>

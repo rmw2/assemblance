@@ -55,11 +55,25 @@ $(document).ready( function readyFunction() {
 	}
 
 	// Handle file uploads
-	$('.inputfile').change(function autoSubmit() {
+	$('.inputfile, .obutton').change(function autoSubmit() {
 		// Flash "compiling..." message while server-side runs
 		$('#asm-code').html('<div id="compiling">compiling...</div>');
-		// Auto submit on file select
-		$(this).parent().submit();
+
+		// Create new FormData to hold file and optimization level
+		var formData = new FormData(document.getElementById('file-form'));
+		var opt = $("#opt-form").serialize().slice(-3);
+
+		formData.set('opt', opt);
+
+		// Submit the composite form
+		$.ajax({
+			url			: 	'/',
+			type 		:	'POST',
+			processData : 	false,
+			data 		:	formData,
+			success 	:	function (response) { $('html').replace(response); },
+			error 		:	function () { $('#asm-code').html('<div id="compiling">server error :(</div>'); }
+		});
 	});
 
 	// Handle relative positioning of tooltips on hover

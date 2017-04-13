@@ -27,7 +27,6 @@ XGCC = '/usr/local/gcc-4.8.1-for-linux64/bin/x86_64-pc-linux-gcc'
 # Secret key to maintain sessions
 app.secret_key = 'not so secret'
 
-
 #**********************************************************************
 # Request functions
 #**********************************************************************
@@ -44,6 +43,8 @@ def index():
         session['uid'] = str(uuid4())
 
     if request.method == 'POST':
+        opt = request.form
+
         if 'srcfile' in request.files:
             # Get file from request if it exists
             file = request.files['srcfile']
@@ -57,7 +58,7 @@ def index():
             # Parse ELF
             try:
                 g.locs = parse_elf(ofile, asm)
-                if app.debug:
+                if g.debug:
                     from pprint import pprint
                     pprint(g.locs)
             except:

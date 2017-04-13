@@ -89,6 +89,17 @@ pre {
 	background-color: #DDD;
 }
 
+#opt-buttons {
+	float: right;
+	font-family: sans-serif;
+	border-color: #FFF;
+}
+
+#opt-buttons .btn {
+	font-weight: bold !important;
+/*	background-color: #66B9BF !important;*/
+}
+
 .tools {
 	/* child of #asm and #source */
 	height: 11%;
