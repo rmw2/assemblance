@@ -6,10 +6,12 @@ Here I present a collection of fairly disorganized and idealistic dreams:
 ## Side-by-side explorer (current project)
 What are all the features I would like in the project as it currently exists?
 
-* Syntax highlighting
+* Syntax highlighting (DONE)
 	- C syntax highlighting, perhaps a parser written in python to add to the markup stage?
 	- asm syntax highlighting, finish the ad hoc parser i'm currently working on to identify addressing modes, etc.
 * Instruction addresses on asm side
+* Modal windows with more in-depth function exploration
+	- Stack visualizer
 
 ## Tracer
 What if we could "run" assembly code in the browser and keep track of the state of the system during its execution?
@@ -37,3 +39,9 @@ If the server were to run on Courselab, why not allow students to access their f
 	- editing may be too much / would distract from learning emacs
 * Alternative: maintain a database of user accounts and local files on each account, have an API for sending to their account via an http post request or an email?
 	- Real goal is to avoid having to download from cluster and then upload from local machine
+
+## More in-depth compiler exploration
+Explain the logic of the compiler in its optimization decisions, and general assembly language patterns.
+
+* Function prologues and maintaining the stack
+	- How does the

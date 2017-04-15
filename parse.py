@@ -301,8 +301,8 @@ def process_operand(token):
         entry = g.locs[g.fcn].get(token.rstrip(','), None)
         if entry is not None:
             cx += location.format(entry=entry, fcn=g.fcn)
-        elif g.debug:
-            print('%s: %s not found' % (g.fcn, token))
+        # elif g.debug:
+        #     print('%s: %s not found' % (g.fcn, token))
 
     except KeyError as e:
         raise

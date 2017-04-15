@@ -9,6 +9,7 @@ class Object():
     pass
 
 from elftools.elf.elffile import ELFFile
+
 if __name__ != "__main__":
     from flask import g
 else:
@@ -184,7 +185,12 @@ def parse_location(loc):
     and return a string corresponding to its location in memory in
     x86-assembly (usually either a register or offset from one).
     """
-    loc = loc.value
+    if hasattr(loc, 'value'):
+        loc = loc.value
+
+    # shitty hack
+    if type(loc) is int:
+        loc = [loc]
 
     if loc[0] == OP_CFA:
         # Indicates (signed) LEB128 offset from base pointer
@@ -278,6 +284,24 @@ def find_locations(symbols, asm):
             }
 
     return locs
+
+def desc(die, func=print):
+    """ Apply a function to every node in the the DWARF tree, traversing it
+    in preorder. """
+
+    # Find first element
+    if hasattr(die, 'iter_CUs'):
+        die = list(die.iter_CUs())[0]
+
+    if hasattr(die, 'get_top_DIE'):
+        die = die.get_top_DIE()
+
+    # Call the function on the first entry
+    func(die)
+
+    # Recur for each child
+    for child in die.iter_children():
+        desc(child)
 
 def parse_elf(stream, asm):
     """ Take an open stream corresponding to and ELF (.o) file,

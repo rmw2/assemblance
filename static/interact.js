@@ -54,26 +54,42 @@ $(document).ready( function readyFunction() {
 		$el.animate( { 'border-width' : 0 }, 1000);
 	}
 
-	// Handle file uploads
-	$('.inputfile, .obutton').change(function autoSubmit() {
+	var submitter = function autoSubmit() {
 		// Flash "compiling..." message while server-side runs
 		$('#asm-code').html('<div id="compiling">compiling...</div>');
+		$('#file-form').submit();
 
-		// Create new FormData to hold file and optimization level
-		var formData = new FormData(document.getElementById('file-form'));
+		// // Create new FormData to hold file and optimization level
+		// var formData = new FormData(document.getElementById('file-form'));
+		// var opt = $("#opt-form").serialize().slice(-3);
+
+		// formData.set('opt', opt);
+
+		// // Submit the composite form
+		// $.ajax({
+		// 	url			: 	'/',
+		// 	type 		:	'POST',
+		// 	processData : 	false,
+		// 	data 		:	formData,
+		// 	success 	:	function (response) { $('html').replace(response); },
+		// 	error 		:	function () { $('#asm-code').html('<div id="compiling">server error :(</div>'); }
+		// });
+	}
+
+	// Handle file uploads
+	$('.inputfile').change(submitter);
+
+	$('.obutton').change( function getOpt() {
+		// get option from radio buttons and mirror it on file form
 		var opt = $("#opt-form").serialize().slice(-3);
+		console.log(opt);
 
-		formData.set('opt', opt);
+		$("#opt-val").val(opt);
 
-		// Submit the composite form
-		$.ajax({
-			url			: 	'/',
-			type 		:	'POST',
-			processData : 	false,
-			data 		:	formData,
-			success 	:	function (response) { $('html').replace(response); },
-			error 		:	function () { $('#asm-code').html('<div id="compiling">server error :(</div>'); }
-		});
+		// submit form if file is attached
+		if ($("#upload-src").val() !== '') {
+			autoSubmit();
+		}
 	});
 
 	// Handle relative positioning of tooltips on hover

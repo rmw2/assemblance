@@ -89,20 +89,35 @@ pre {
 	background-color: #DDD;
 }
 
-#opt-buttons {
-	float: right;
-	font-family: sans-serif;
-	border-color: #FFF;
-}
-
 #opt-buttons .btn {
 	font-weight: bold !important;
 /*	background-color: #66B9BF !important;*/
 }
 
+.btn-group {
+	font-family: sans-serif;
+	border-color: #FFF;
+}
+
+.button-holder, #opt-buttons {
+	float: right;
+	display: block;
+}
+
+.button-label {
+	margin: auto;
+	text-align: center;
+}
+
 .tools {
 	/* child of #asm and #source */
 	height: 11%;
+	position: relative;
+}
+
+.tool {
+	width: 33%;
+	float: left;
 }
 
 .content {
@@ -176,6 +191,23 @@ pre {
 	z-index: -1;
 }
 
+#c-filename {
+	padding: 5px 15px 5px 15px;
+	border-radius: 5px;
+	width: 150px;
+
+	margin: auto;
+	margin-top: 4%;
+	text-align: center;
+
+	background-color: #555;
+	font-weight: bold;
+	color: #FFF;
+}
+
+.placeholder {
+	visibility: hidden;
+}
 /**********************************************************************
  * code entity styles
  *********************************************************************/

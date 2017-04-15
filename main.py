@@ -36,21 +36,26 @@ def index():
     """ Index: serve the homepage and handle file uploads.
     Issue-- this currently re-renders the entire template every time...
     """
-    g.debug = True
+    g.debug = False
 
     # Manage session variables
     if 'uid' not in session:
         session['uid'] = str(uuid4())
+    if 'opt' not in g:
+        g.opt = '-O0'
 
     if request.method == 'POST':
-        opt = request.form
+        # Save optimization level
+        g.opt = request.form['opt']
 
         if 'srcfile' in request.files:
+            print("Compiling with optimization %s" % g.opt)
+
             # Get file from request if it exists
             file = request.files['srcfile']
 
             # Compile
-            try: src, asm, ofile = run_gcc(file)
+            try: src, asm, ofile = run_gcc(file, g.opt)
             except RuntimeError:
                 flash('compilation failed')
                 return redirect(request.url)
@@ -71,6 +76,8 @@ def index():
             session['src-markup'] = format_c(src, colors)
 
             return render_template( 'index.html',
+                    opt = g.opt,
+                    fname=file.filename,
                     srctext=session['src-markup'],
                     asmtext=session['asm-markup'])
 
@@ -78,8 +85,10 @@ def index():
             flash('No File Selected')
 
     return render_template( 'index.html',
-            srctext='source goes here',
-            asmtext='assembly goes here')
+            opt = g.opt,
+            fname = 'no file selected',
+            srctext = 'source goes here',
+            asmtext = 'assembly goes here')
 
 
 @app.route('/about')
