@@ -43,6 +43,10 @@ Special thanks to Bob Dondero for his advising during this project, and the x86-
   - tooltip includes type and declaration line (only works for base types, still need to add support for enums, typedefs, pointer types/arrays etc.)
 * (4/6) Automatically clean uploads folder on startup
 * (4/11) Added support for pointers, typedefs, and enumerations for variable tooltips
+* (4/15) Added support and test file for arrays for variable tooltips
+* (4/15) Added optimization select to UI and fixed form submission
+  - Still requires re-upload of file...
+* (4/15) Added filename display to UI
 
 ## TODO
 * Finish variable name / memory address correspondance
@@ -52,7 +56,6 @@ Special thanks to Bob Dondero for his advising during this project, and the x86-
   - scale font size to screen width
   - add operand size and type to tooltips
 * Support optimization
-  - form buttons to select optimization levels 0-3 (auto-submit on selection)
   - cache markup for each optimization level so you don't need to recompile
   - delay cleanup of uploads folder until end of session
 
