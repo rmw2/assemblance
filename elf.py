@@ -15,7 +15,7 @@ if __name__ != "__main__":
 else:
     # Fake flask global object to give debugging flag
     g = Object()
-    g.debug = True
+    g.debug = False
 
 from pprint import pprint
 
@@ -29,8 +29,9 @@ PTR_TAG = 'DW_TAG_pointer_type'
 ARR_TAG = 'DW_TAG_array_type'
 STC_TAG = 'DW_TAG_structure_type'
 ENM_TAG = 'DW_TAG_enumeration_type'
+CST_TAG = 'DW_TAG_const_type'
 
-TYPES = (TYP_TAG, ARR_TAG, PTR_TAG, ENM_TAG, STC_TAG, DEF_TAG)
+TYPES = (TYP_TAG, ARR_TAG, PTR_TAG, ENM_TAG, STC_TAG, DEF_TAG, CST_TAG)
 
 ENGLISH = {
     VAR_TAG: 'local variable',
@@ -45,6 +46,8 @@ LINE = 'DW_AT_decl_line'
 BASE = 'DW_AT_frame_base'
 LOPC = 'DW_AT_low_pc'
 HIPC = 'DW_AT_high_pc'
+FILE = 'DW_AT_decl_file'
+CVAL = 'DW_AT_const_value'
 
 # Relevant conversions
 OP_CFA = 0x91
@@ -62,28 +65,29 @@ regs = [    # Register names in order
 def get_leb128(leb, signed=True):
     """ Decode a LEB128 signed integer represented as a list of bytes.
     """
+    try:
+        value = 0
+        i = 0
 
-    value = 0
-    i = 0
+        while leb[i] & 128 > 0:
+            value |= (leb[i] & 127) << 7*i
+            i += 1
 
-    while leb[i] & 128 > 0:
-        value |= (leb[i] & 127) << 7*i
-        i += 1
+        if signed:
+            value |= ((leb[i] & 63) - (leb[i] & 64)) << 7*i
+        else:
+            value |= (leb[i] & 127) << 7*i
 
-    if signed:
-        value |= ((leb[i] & 63) - (leb[i] & 64)) << 7*i
-    else:
-        value |= (leb[i] & 127) << 7*i
+        return value
+    except:
+        # Give info about crash
+        print('LEB128 decoding error: \n\t%s could not be decoded.' % leb)
+        raise
 
-    return value
-
-def find_variables(stream):
+def find_variables(dwarf):
     """ Take a dwarf_info object and generate a dictionary of source code
     symbols and stack/register positions.
     """
-    # Parse the stream
-    elf = ELFFile(stream)
-    dwarf = elf.get_dwarf_info()
 
     # Dictionary to hold stuff
     symbols = {}
@@ -95,65 +99,83 @@ def find_variables(stream):
         # Walk through top level children, includes functions and types
         if die.tag == FCN_TAG:
             if g.debug:
-                print('(func) %d: %s' % (die.offset, die.tag))
+                print('(func) %d: %s\t%s ' % (die.offset, die.tag, die.attributes[NAME].value))
 
             # Handle function, descend
             fcn = parse_name(die.attributes[NAME])
 
             # Add general function attributes to dictionary
-            symbols[fcn] = {
-                '$info': {
-                    'base' : die.attributes[BASE].value,
-                    'line' : die.attributes[LINE].value,
-                    'lopc' : die.attributes[LOPC].value,
-                    'hipc' : die.attributes[HIPC].value
-                }
-            }
+            symbols[fcn] = {'$info': get_fnc_info(die)}
 
             # Iterate over function's children
             for child in die.iter_children():
-                if g.debug:
-                    print('(var)  %d: %s' % (child.offset, child.tag))
-                if child.tag == VAR_TAG or child.tag == PAR_TAG:
-                    # Get variable name, type, and locations
-                    name = parse_name(child.attributes[NAME])
-                    typ = parse_type(child.attributes[TYPE])
-                    line = child.attributes[LINE].value
-                    loc = parse_location(child.attributes[LOC])
+                try:
+                    if g.debug:
+                        print('(var)  %d: %s\%s' % (child.offset, child.tag, child.attributes[NAME].value))
+                    if child.tag == VAR_TAG or child.tag == PAR_TAG:
+                        # Skip variables declared in other files
+                        if FILE in child.attributes and child.attributes[FILE].value != 1:
+                            continue
 
-                    # Add to dictionary
-                    symbols[fcn][name] = {
-                        'type'  : typ,
-                        'line'  : line,
-                        'loc'   : loc,
-                        'role'  : ENGLISH[child.tag]
-                    }
+                        # Get variable name, type, and locations
+                        name = parse_name(child.attributes[NAME])
+                        typ = parse_type(child.attributes[TYPE])
+                        line = child.attributes[LINE].value
+
+                        if LOC not in child.attributes:
+                            if CVAL in child.attributes:
+                                loc = '$' + str(child.attributes[CVAL].value)
+                            else:
+                                loc = 'none'
+                                print('Tag without location or constant value:')
+                                print(child)
+                        else:
+                            loc = parse_location(child.attributes[LOC])
+
+                        # Add to dictionary
+                        symbols[fcn][name] = {
+                            'type'  : typ,
+                            'line'  : line,
+                            'loc'   : loc,
+                            'role'  : ENGLISH[child.tag]
+                        }
+                except:
+                    print('Error parsing debugging entry at %d\n\t(%s, child of %s)' % (child.offset, child.tag, fcn))
+                    print(child)
+                    raise
 
         elif die.tag in TYPES:
-            if g.debug:
-                print('(type) %d: %s' % (die.offset, die.tag))
+            try:
+                if g.debug:
+                    try: name = die.attributes[NAME].value
+                    except: name = 'none'
+                    print('(type) %d: %s\t%s' % (die.offset, die.tag, name))
 
-            if die.tag == DEF_TAG:
-                print(die)
+                # regular types entries with a name
+                try: name = parse_type(die.attributes[NAME])
+                # no name, not relevant
+                except: name = ''
+                # pointer types and typedefs have another reference
+                try: ref = parse_type(die.attributes[TYPE])
+                # no ref, no worries
+                except: ref = 0
 
-            # regular types entries with a name
-            try: name = parse_type(die.attributes[NAME])
-            # no name, not relevant
-            except: name = ''
-            # pointer types and typedefs have another reference
-            try: ref = parse_type(die.attributes[TYPE])
-            # no ref, no worries
-            except: ref = 0
+                # Save in types dictionary by offset
+                types[die.offset] = {
+                    'name'  :   name,
+                    'tag'   :   die.tag,
+                    'ref'   :   ref
+                }
+            except:
+                print('Error parsing top level debugging entry at %d\n\t(%s)'
+                    % (die.offset, die.tag))
+                print(child)
+                raise
 
-            # Save in types dictionary by offset
-            types[die.offset] = {
-                'name'  :   name,
-                'tag'   :   die.tag,
-                'ref'   :   ref
-            }
 
         elif g.debug:
-            print('(???)  %d: %s' % (die.offset, die.tag))
+            print('\n(???)  %d: %s' % (die.offset, die.tag))
+            print(die, '\n')
 
     # Turn type references into actual types
     for fcn in symbols:
@@ -165,13 +187,10 @@ def find_variables(stream):
                 if g.debug:
                     print('Type %s not found in DIE tree' % symbols[fcn][name]['type'])
 
-    if g.debug:
-        pprint(types)
-        pprint(symbols)
-
     return symbols
 
 def parse_name(name):
+
     return name.value.decode('UTF-8')
 
 def parse_type(typ):
@@ -185,31 +204,46 @@ def parse_location(loc):
     and return a string corresponding to its location in memory in
     x86-assembly (usually either a register or offset from one).
     """
-    if hasattr(loc, 'value'):
-        loc = loc.value
 
-    # shitty hack
-    if type(loc) is int:
-        loc = [loc]
+    try:
+        if hasattr(loc, 'value'):
+            loc = loc.value
 
-    if loc[0] == OP_CFA:
-        # Indicates (signed) LEB128 offset from base pointer
-        return get_leb128(loc[1:])
+        # shitty hack
+        if type(loc) is int:
+            loc = [loc]
 
-    if loc[0] >= OP_REG and loc[0] < OP_BREG:
-        # Indicates in-register location
+        if loc[0] == OP_CFA:
+            if len(loc) > 1:
+                # Indicates (signed) LEB128 offset from base pointer
+                return get_leb128(loc[1:])
+            else:
+                # Not sure what this means, maybe just %rbp ?
+                return '%rbp'
 
-        # TODO: figure out size of operand and change register name accordingly
-        result = regs[loc[0] - OP_REG]
-        return '%' + result
+        if loc[0] >= OP_REG and loc[0] < OP_BREG:
+            # Indicates in-register location
 
-    if loc[0] >= OP_BREG:
-        # Get offset from register
-        offset = get_leb128(loc[1:])
-        # Get register
-        reg = regs[loc[0] - OP_BREG]
+            # TODO: figure out size of operand and change register name accordingly
+            result = regs[loc[0] - OP_REG]
+            return '%' + result
 
-        return [offset, reg]
+        if loc[0] >= OP_BREG:
+            if len(loc) > 1:
+                # Get offset from register
+                offset = get_leb128(loc[1:])
+            else:
+                offset = ''
+
+            # Get register
+            reg = regs[loc[0] - OP_BREG]
+
+            return [offset, reg]
+    except:
+        print('Unable to resolve location: %s' % loc)
+        try: print('\t(decoded: %s)' % get_leb128(loc))
+        except: pass
+        raise
 
 def resolve_type(types, key):
     """ Lookup a type in the dictionary generated from the
@@ -231,8 +265,26 @@ def resolve_type(types, key):
     if tag == DEF_TAG:
         suffix = ' ({}) '.format(resolve_type(types, types[key]['ref']))
         return types[key]['name'] + suffix
+    if tag == CST_TAG:
+        newkey = types[key]['ref']
+        return 'const ' + resolve_type(types, newkey)
 
+    print('Unable to resolve type:\t%s (%s)' % (key, tag))
     return tag
+
+def get_fnc_info(die):
+    """ Get the hi/lo program counter, frame base, and line number of the
+    function encoded by the debugging informating entity.
+    """
+    info = {}
+
+    for att in (BASE, LINE, LOPC, HIPC):
+        if att in die.attributes:
+            info[att] = die.attributes[att].value
+        else:
+            info[att] = 0
+
+    return info
 
 def format_location(loc, offset):
     # Format string for indirect addressing
@@ -310,11 +362,30 @@ def parse_elf(stream, asm):
     locations and symbols.  Close the stream when finished.
     """
 
-    syms = find_variables(stream)
-    locs = find_locations(syms, asm)
-    stream.close()
+    try:
+        # Parse the stream
+        elf = ELFFile(stream)
+        dwarf = elf.get_dwarf_info()
+        # Process elf stuff
+        syms = find_variables(dwarf)
+        locs = find_locations(syms, asm)
+    except:
+        if g.debug:
+            desc(dwarf)
+        raise
+    finally:
+        stream.close()
 
     return locs
+
+def print_locs(locs):
+    """ Pretty output of locations found in DWARF info.
+    """
+    for func in locs:
+        print(func)
+
+        for loc in locs[func]:
+            print('\t%s:\t%s' % (loc, locs[func][loc]['name']))
 
 if __name__ == "__main__":
     from elftools.elf.elffile import ELFFile
@@ -328,4 +399,4 @@ if __name__ == "__main__":
                 locs = parse_elf(ofile, asm)
 
         print('\nLocations:')
-        pprint(locs)
+        print_locs(locs)

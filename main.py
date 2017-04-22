@@ -45,44 +45,35 @@ def index():
         g.opt = '-O0'
 
     if request.method == 'POST':
-        # Save optimization level
-        g.opt = request.form['opt']
-
         if 'srcfile' in request.files:
-            print("Compiling with optimization %s" % g.opt)
-
-            # Get file from request if it exists
+            # Get file from request if it exists and save to uploads folder
             file = request.files['srcfile']
+            session['src'], session['filename'] = save_to_uploads(file)
 
-            # Compile
-            try: src, asm, ofile = run_gcc(file, g.opt)
-            except RuntimeError:
-                flash('compilation failed')
-                return redirect(request.url)
+        # Compile with specified optimization
+        g.opt = request.form['opt']
+        print("Compiling with optimization %s" % g.opt)
 
-            # Parse ELF
-            try:
-                g.locs = parse_elf(ofile, asm)
-                if g.debug:
-                    from pprint import pprint
-                    pprint(g.locs)
-            except:
-                # Clean up in case of crash
-                ofile.close()
-                raise
+        try: asm, ofile = run_gcc(session['filename'], g.opt)
+        except RuntimeError:
+            flash('compilation failed')
+            return redirect(request.url)
 
-            # Process
-            (session['asm-markup'], colors) = process_asm(asm)
-            session['src-markup'] = format_c(src, colors)
+        # Parse ELF
+        g.locs = parse_elf(ofile, asm)
+        if g.debug:
+            from pprint import pprint
+            pprint(g.locs)
 
-            return render_template( 'index.html',
-                    opt = g.opt,
-                    fname=file.filename,
-                    srctext=session['src-markup'],
-                    asmtext=session['asm-markup'])
+        # Process
+        (session['asm-markup'], colors) = process_asm(asm)
+        session['src-markup'] = format_c(session['src'], colors)
 
-        else:
-            flash('No File Selected')
+        return render_template( 'index.html',
+                opt = g.opt,
+                fname=file.filename,
+                srctext=session['src-markup'],
+                asmtext=session['asm-markup'])
 
     return render_template( 'index.html',
             opt = g.opt,
@@ -126,18 +117,13 @@ clean_all()
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
-def run_gcc(file, opt='-O0', gcc=XGCC):
-    """ Open, read, and save a c program represented as the object file.
-    Compile with -g both to assembly and object code.
-    Return src as a list of lines of C, asm as a list of lines in assembly,
-    and ofile as an open stream for the object code file.
-    """
-
+def save_to_uploads(file):
     # Decode source text
     src = [line.decode('UTF-8') for line in file.readlines()]
 
     # Save text of source file to uploads folder
     filename = secure_filename(file.filename)
+
     prefix = os.path.join(UPLOADS_FOLDER, session['uid'])
 
     # Create folder if necessary
@@ -146,8 +132,21 @@ def run_gcc(file, opt='-O0', gcc=XGCC):
 
     # Save to newly created folder
     filepath = os.path.join(prefix, filename)
+
     with open(filepath, 'w') as cfile:
         cfile.write(''.join(src))
+
+    return src, filename
+
+def run_gcc(filename, opt='-O0', gcc=XGCC):
+    """ Open, read, and save a c program represented as the object file.
+    Compile with -g both to assembly and object code.
+    Return src as a list of lines of C, asm as a list of lines in assembly,
+    and ofile as an open stream for the object code file.
+    """
+
+    prefix = os.path.join(UPLOADS_FOLDER, session['uid'])
+    filepath = os.path.join(prefix, filename)
 
     # Locations for new files
     sfilepath = os.path.join(prefix, filename[:-2] + '.s')
@@ -168,4 +167,4 @@ def run_gcc(file, opt='-O0', gcc=XGCC):
     # open file stream for object code
     ofile = open(ofilepath, 'rb')
 
-    return src, asm, ofile
+    return asm, ofile

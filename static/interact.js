@@ -87,8 +87,8 @@ $(document).ready( function readyFunction() {
 		$("#opt-val").val(opt);
 
 		// submit form if file is attached
-		if ($("#upload-src").val() !== '') {
-			autoSubmit();
+		if ($("#c-filename-text").text() !== 'no file selected') {
+			submitter();
 		}
 	});
 
