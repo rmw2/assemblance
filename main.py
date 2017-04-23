@@ -36,7 +36,7 @@ def index():
     """ Index: serve the homepage and handle file uploads.
     Issue-- this currently re-renders the entire template every time...
     """
-    g.debug = False
+    g.debug = True
 
     # Manage session variables
     if 'uid' not in session:
@@ -45,10 +45,25 @@ def index():
         g.opt = '-O0'
 
     if request.method == 'POST':
-        if 'srcfile' in request.files:
+        if 'srcfile' in request.files and request.files['srcfile'].filename != '':
             # Get file from request if it exists and save to uploads folder
             file = request.files['srcfile']
+            if g.debug:
+                print('Using uploaded file: %s' % file.filename)
+
+            # Save file on the server and cache name and source text on the session
             session['src'], session['filename'] = save_to_uploads(file)
+
+        elif 'filename' in session:
+            if g.debug:
+                print('Using cached file: %s' % session['filename'])
+        else:
+            if g.debug:
+                print('File not found in upload and filename not in cache.')
+                print('Session variables:')
+                for key in session:
+                    print('\t%s:\t%s' % (key, session[key]))
+            raise RuntimeError('File not found')
 
         # Compile with specified optimization
         g.opt = request.form['opt']
@@ -71,7 +86,7 @@ def index():
 
         return render_template( 'index.html',
                 opt = g.opt,
-                fname=file.filename,
+                fname=session['filename'],
                 srctext=session['src-markup'],
                 asmtext=session['asm-markup'])
 
@@ -89,15 +104,15 @@ def about():
     return "It's some good stuff.  By Rob Whitaker."
 
 
-@app.after_request
-def clean(response):
-    """ Cleanup the server after a session.
-    """
-    if session['uid'] in os.listdir(UPLOADS_FOLDER):
-        print('\tCleaning directory for session: %s', session['uid'])
-        shutil.rmtree(os.path.join(UPLOADS_FOLDER, session['uid']))
+# @app.after_request
+# def clean(response):
+#     """ Cleanup the server after a session.
+#     """
+#     if session['uid'] in os.listdir(UPLOADS_FOLDER):
+#         print('\tCleaning directory for session: %s', session['uid'])
+#         shutil.rmtree(os.path.join(UPLOADS_FOLDER, session['uid']))
 
-    return response
+#     return response
 
 def clean_all():
     """ Cleanup on startup.

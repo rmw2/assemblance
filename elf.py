@@ -4,15 +4,17 @@ elf.py
 Handle parsing of the DWARF DIE tree and locating variables
 """
 
-class Object():
-    """ Hack for running main method outside of flask. """
-    pass
 
 from elftools.elf.elffile import ELFFile
 
 if __name__ != "__main__":
     from flask import g
 else:
+    class Object():
+        """ Hack for running main method outside of flask.
+        """
+        pass
+
     # Fake flask global object to give debugging flag
     g = Object()
     g.debug = False
@@ -68,6 +70,7 @@ regs = [    # Register names in order
 
 def get_leb128(leb, signed=True):
     """ Decode a LEB128 signed integer represented as a list of bytes.
+    Adapted from pseudocode provided in https://en.wikipedia.org/wiki/LEB128
     """
     try:
         value = 0
@@ -104,8 +107,8 @@ def find_variables(dwarf):
         # Walk through top level children, includes functions and types
         if die.tag == FCN_TAG:
             if g.debug:
-                print('(func) %d: %s\t%s '
-                    % (die.offset, die.tag, die.attributes[NAME].value))
+                print('(func) %d: %s'
+                    % (die.offset, die.tag))
 
             # Handle function, descend
             fcn = parse_name(die)
@@ -117,8 +120,8 @@ def find_variables(dwarf):
             for child in die.iter_children():
                 try:
                     if g.debug:
-                        print('(var)  %d: %s\%s'
-                            % (child.offset, child.tag, child.attributes[NAME].value))
+                        print('(var)  %d: %s'
+                            % (child.offset, child.tag))
                     if child.tag == VAR_TAG or child.tag == PAR_TAG:
                         # Skip variables declared in other files
                         if FILE in child.attributes and child.attributes[FILE].value != 1:

@@ -93,17 +93,17 @@
 				<form id="opt-form">
 				<div id="opt-button-holder" class="button-holder">
 					<div id="opt-buttons" class="btn-group" data-toggle="buttons">
-					  <label class="btn btn-primary active">
-					    <input type="radio" name="options" value="-O0" id="O0" class="obutton" autocomplete="off" checked> -O0
+					  <label class="btn btn-primary {% if opt == '-O0' %} active {% endif %}">
+					    <input type="radio" name="options" value="-O0" id="O0" class="obutton" autocomplete="off" {% if opt == '-O0' %} checked {% endif %}> -O0
 					  </label>
-					  <label class="btn btn-primary">
-					    <input type="radio" name="options" value="-O1" id="O1" class="obutton" autocomplete="off"> -O1
+					  <label class="btn btn-primary {% if opt == '-O1' %} active {% endif %}">
+					    <input type="radio" name="options" value="-O1" id="O1" class="obutton" autocomplete="off" {% if opt == '-O1' %} checked {% endif %}> -O1
 					  </label>
-					  <label class="btn btn-primary">
-					    <input type="radio" name="options" value="-O2" id="O2" class="obutton" autocomplete="off"> -O2
+					  <label class="btn btn-primary {% if opt == '-O2' %} active {% endif %}">
+					    <input type="radio" name="options" value="-O2" id="O2" class="obutton" autocomplete="off" {% if opt == '-O2' %} checked {% endif %}> -O2
 					  </label>
-					  <label class="btn btn-primary">
-					    <input type="radio" name="options" value="-O3" id="O3" class="obutton" autocomplete="off"> -O3
+					  <label class="btn btn-primary {% if opt == '-O3' %} active {% endif %}">
+					    <input type="radio" name="options" value="-O3" id="O3" class="obutton" autocomplete="off" {% if opt == '-O3' %} checked {% endif %}> -O3
 					  </label>
 					</div>
 					<div class="button-label">optimization level</div>

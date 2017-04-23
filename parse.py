@@ -297,15 +297,9 @@ def process_operand(token):
     cx = highlight(token, oplexer, opformatter)
 
     # do lookup in address table and add location tooltip to markup
-    try:
-        entry = g.locs[g.fcn].get(token.rstrip(','), None)
-        if entry is not None:
-            cx += location.format(entry=entry, fcn=g.fcn)
-        # elif g.debug:
-        #     print('%s: %s not found' % (g.fcn, token))
-
-    except KeyError as e:
-        raise
+    entry = g.locs[g.fcn].get(token.rstrip(','), None)
+    if entry is not None:
+        cx += location.format(entry=entry, fcn=g.fcn)
 
     return wrap_token(cx, cl)
 
