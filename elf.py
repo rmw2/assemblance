@@ -49,6 +49,10 @@ HIPC = 'DW_AT_high_pc'
 FILE = 'DW_AT_decl_file'
 CVAL = 'DW_AT_const_value'
 
+# Forms
+EXPR = 'DW_FORM_exprloc'
+SECO = 'DW_FORM_sec_offset'
+
 # Relevant conversions
 OP_CFA = 0x91
 OP_REG = 0x50
@@ -92,6 +96,7 @@ def find_variables(dwarf):
     # Dictionary to hold stuff
     symbols = {}
     types = {}
+    eliminated = []
 
     root = list(dwarf.iter_CUs())[0].get_top_DIE()
 
@@ -99,10 +104,11 @@ def find_variables(dwarf):
         # Walk through top level children, includes functions and types
         if die.tag == FCN_TAG:
             if g.debug:
-                print('(func) %d: %s\t%s ' % (die.offset, die.tag, die.attributes[NAME].value))
+                print('(func) %d: %s\t%s '
+                    % (die.offset, die.tag, die.attributes[NAME].value))
 
             # Handle function, descend
-            fcn = parse_name(die.attributes[NAME])
+            fcn = parse_name(die)
 
             # Add general function attributes to dictionary
             symbols[fcn] = {'$info': get_fnc_info(die)}
@@ -111,26 +117,18 @@ def find_variables(dwarf):
             for child in die.iter_children():
                 try:
                     if g.debug:
-                        print('(var)  %d: %s\%s' % (child.offset, child.tag, child.attributes[NAME].value))
+                        print('(var)  %d: %s\%s'
+                            % (child.offset, child.tag, child.attributes[NAME].value))
                     if child.tag == VAR_TAG or child.tag == PAR_TAG:
                         # Skip variables declared in other files
                         if FILE in child.attributes and child.attributes[FILE].value != 1:
                             continue
 
                         # Get variable name, type, and locations
-                        name = parse_name(child.attributes[NAME])
-                        typ = parse_type(child.attributes[TYPE])
-                        line = child.attributes[LINE].value
-
-                        if LOC not in child.attributes:
-                            if CVAL in child.attributes:
-                                loc = '$' + str(child.attributes[CVAL].value)
-                            else:
-                                loc = 'none'
-                                print('Tag without location or constant value:')
-                                print(child)
-                        else:
-                            loc = parse_location(child.attributes[LOC])
+                        name = parse_name(child)
+                        typ = parse_type(child)
+                        line = parse_line(child)
+                        loc = parse_location(child)
 
                         # Add to dictionary
                         symbols[fcn][name] = {
@@ -139,8 +137,10 @@ def find_variables(dwarf):
                             'loc'   : loc,
                             'role'  : ENGLISH[child.tag]
                         }
+
                 except:
-                    print('Error parsing debugging entry at %d\n\t(%s, child of %s)' % (child.offset, child.tag, fcn))
+                    print('Error parsing debugging entry at %d\n\t(%s, child of %s)'
+                        % (child.offset, child.tag, fcn))
                     print(child)
                     raise
 
@@ -152,13 +152,9 @@ def find_variables(dwarf):
                     print('(type) %d: %s\t%s' % (die.offset, die.tag, name))
 
                 # regular types entries with a name
-                try: name = parse_type(die.attributes[NAME])
-                # no name, not relevant
-                except: name = ''
+                name = parse_name(die)
                 # pointer types and typedefs have another reference
-                try: ref = parse_type(die.attributes[TYPE])
-                # no ref, no worries
-                except: ref = 0
+                ref = parse_type(die)
 
                 # Save in types dictionary by offset
                 types[die.offset] = {
@@ -166,12 +162,12 @@ def find_variables(dwarf):
                     'tag'   :   die.tag,
                     'ref'   :   ref
                 }
+
             except:
                 print('Error parsing top level debugging entry at %d\n\t(%s)'
                     % (die.offset, die.tag))
                 print(child)
                 raise
-
 
         elif g.debug:
             print('\n(???)  %d: %s' % (die.offset, die.tag))
@@ -189,21 +185,58 @@ def find_variables(dwarf):
 
     return symbols
 
-def parse_name(name):
+def parse_name(die):
+    """ Get the name attribute from a debugging entry.
+    """
+    if NAME in die.attributes:
+        return die.attributes[NAME].value.decode('UTF-8')
+    else:
+        if g.debug:
+            print('%s with no name attribute' % die.tag)
+            print(die)
+        return 'none'
 
-    return name.value.decode('UTF-8')
+def parse_type(die):
+    """ Get the type attribute from a debugging entry.
+    """
+    if TYPE in die.attributes:
+        try:
+            return die.attributes[TYPE].value.decode('UTF-8')
+        except:
+            return die.attributes[TYPE].value
+    else:
+        if g.debug:
+            print('%s with no type' % die.tag)
+            print(die)
+        return 0
 
-def parse_type(typ):
+def parse_line(die):
+    """ Get declaration line from a debugging entry.
+    """
     try:
-        return typ.value.decode('UTF-8')
+        return die.attributes[LINE].value
     except:
-        return typ.value
+        return 0
 
-def parse_location(loc):
+
+def parse_location(die):
     """ Take the value of a location attribute (DW_AT_location) loc
     and return a string corresponding to its location in memory in
     x86-assembly (usually either a register or offset from one).
     """
+
+
+    if LOC in die.attributes:
+        loc = die.attributes[LOC]
+    elif CVAL in die.attributes:
+        return '$' + str(die.attributes[CVAL].value)
+    else:
+        return ''
+
+    if loc.form != EXPR:
+        print('Unrecognized location encoding:')
+        print('\t%s\t%s' % (die.attributes[LOC].form, die.attributes[LOC].value))
+        return '???'
 
     try:
         if hasattr(loc, 'value'):
@@ -235,10 +268,14 @@ def parse_location(loc):
             else:
                 offset = ''
 
-            # Get register
-            reg = regs[loc[0] - OP_BREG]
+            try:
+                # Get register
+                reg = regs[loc[0] - OP_BREG]
 
-            return [offset, reg]
+                return [offset, reg]
+            except:
+                return '???'
+
     except:
         print('Unable to resolve location: %s' % loc)
         try: print('\t(decoded: %s)' % get_leb128(loc))
@@ -300,7 +337,10 @@ def format_location(loc, offset):
         # register only
         return loc
 
-    raise "you fuq'd up son"
+    if g.debug:
+        print('location format not understood: ' + str(loc))
+
+    return '???'
 
 
 def find_locations(symbols, asm):
@@ -320,6 +360,10 @@ def find_locations(symbols, asm):
 
     # Get symbols by location, corrected by offset
     for fcn in symbols:
+        # skip library functions where we don't have variable delcarations
+        if fcn not in locs:
+            continue
+
         # Lookup base pointer offset
         for sym in symbols[fcn]:
             if sym.startswith('$'): continue
@@ -385,7 +429,8 @@ def print_locs(locs):
         print(func)
 
         for loc in locs[func]:
-            print('\t%s:\t%s' % (loc, locs[func][loc]['name']))
+            if loc == 'offset': continue
+            print('\t%10s\t%s' % (locs[func][loc]['name'], loc))
 
 if __name__ == "__main__":
     from elftools.elf.elffile import ELFFile

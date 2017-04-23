@@ -32,7 +32,7 @@ whitelist = ['.section', '.globl', '.byte', '.word', \
         '.long', '.quad', '.type', '.asciz', '.ascii', '.string', '.skip']
 
 # Disallowed labels
-badlabel = re.compile('((.LF)|(.Ltemp)|(.Ltext)).*')
+badlabel = re.compile('((.LF)|(.Ltemp)|(.Ltext)|(.LVL)).*')
 
 #**********************************************************************
 # Markup format strings
