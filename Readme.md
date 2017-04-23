@@ -47,6 +47,7 @@ Special thanks to Bob Dondero for his advising during this project, and the x86-
 * (4/15) Added optimization select to UI and fixed form submission
   - Still requires re-upload of file...
 * (4/15) Added filename display to UI
+* (4/22) Fixed back and front end for optimization and merged with master
 
 ## TODO
 * Finish variable name / memory address correspondance
@@ -57,7 +58,7 @@ Special thanks to Bob Dondero for his advising during this project, and the x86-
   - add operand size and type to tooltips
 * Support optimization
   - cache markup for each optimization level so you don't need to recompile
-  - delay cleanup of uploads folder until end of session
+
 
 ## Limitations
 * At this point the project will be restricted to the same subset of x86-64 used by Princeton's COS217.  Specifically this excludes floating point arithmetic and assumes that functions take no more than six arguments, and that structs are not passed as arguments.
