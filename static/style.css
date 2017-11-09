@@ -1,0 +1,464 @@
+/* style.css */
+/* Author: Rob Whitaker */
+
+body {
+	font-family: 'Josefin Sans', sans-serif;
+}
+
+h1, h2 {
+	display: inline;
+}
+
+form {
+	margin: 0;
+	padding: 0;
+}
+
+label {
+	float: left;
+}
+
+input {
+	float: right;
+}
+
+pre {
+	font-size: 8pt;
+	overflow: hidden;
+}
+
+/**********************************************************************
+ * container styles
+ *********************************************************************/
+
+#source {
+	background-color: #DDD;
+	padding: 10pt;
+	color: #000;
+	width: 50%;
+	height: 89%;
+	border-right: 1pt solid #FFF;
+}
+
+#asm {
+	background-color: #EFEFEF;
+	padding: 10pt;
+	width: 50%;
+	height: 89%;
+	border-left: 1pt solid #FFF;
+}
+
+#asm-code {
+	display: block;
+	border: solid 1px #DDD;
+
+	mask-image: -webkit-gradient(linear, top, bottom,
+		color-stop(0.00,  rgba(0,0,0,1)),
+		color-stop(0.95,  rgba(0,0,0,1)),
+		color-stop(1.00,  rgba(0,0,0,0)));
+}
+
+#source-code {
+	border: solid 1px #EFEFEF;
+}
+
+#top {
+	background-color: #66B9BF;
+	border-bottom: 2pt solid #FFF;
+	/* child of .container */
+	height: 11%;
+}
+
+#title {
+	padding: 10pt 5pt 10pt 5pt;
+	font-size: 24pt;
+	color: #FFF;
+}
+
+#flash-container {
+	padding: 10pt 5pt 10pt 5pt;
+}
+
+#compiling {
+	font-family: 'Josefin Sans' sans-serif;
+	font-size: 18pt;
+	/* width: 100%; */
+	margin: auto;
+	padding: 48pt 0 48pt 0;
+	text-align: center;
+	background-color: #DDD;
+}
+
+#opt-buttons .btn {
+	font-weight: bold !important;
+/*	background-color: #66B9BF !important;*/
+}
+
+.btn-group {
+	font-family: sans-serif;
+	border-color: #FFF;
+}
+
+.button-holder, #opt-buttons {
+	float: right;
+	display: block;
+}
+
+.button-label {
+	margin: auto;
+	text-align: center;
+}
+
+.tools {
+	/* child of #asm and #source */
+	height: 11%;
+	position: relative;
+}
+
+.tool {
+	width: 33%;
+	float: left;
+}
+
+.content {
+	padding: 5pt;
+	border-radius: 5px;
+	font-family: Monospace;
+
+	/* relative to parents .col-sm-6 */
+	height: 89%;
+
+	/* adding a scrollbar clips tooltips,
+	they must be positioned on their own */
+	overflow-x: hidden;
+	overflow-y: scroll;
+}
+
+/**********************************************************************
+ * generic ui item styles
+ *********************************************************************/
+
+.flash {
+	border-radius: 10px;
+	padding: 5px;
+	color: #F00;
+	font-weight: bold;
+}
+
+.clear {
+	clear: both;
+}
+
+.menu-item {
+	float: right;
+	padding: 10pt 5pt 10pt 5pt;
+	font-size: 18pt;
+	text-align: center;
+	color: #FFF;
+	border-left: 1pt solid #FFF;
+}
+
+.menu-item:hover {
+	background-color: #07889B;
+}
+
+.label-header {
+	float: left;
+	font-size: 24pt;
+}
+
+.label-button {
+	float: right;
+	font-size: 18pt;
+	border-radius: 5px;
+	background-color: #EEE;
+	border: 1pt solid #000;
+	padding: 5pt;
+	text-align: center;
+	cursor: pointer;
+}
+
+.label-button:hover {
+	background-color: #EEAA7B;
+}
+
+.inputfile {
+	width: 0.1px;
+	height: 0.1px;
+	opacity: 0;
+	overflow: hidden;
+	position: absolute;
+	z-index: -1;
+}
+
+#c-filename {
+	padding: 5px 15px 5px 15px;
+	border-radius: 5px;
+	width: 150px;
+
+	margin: auto;
+	margin-top: 4%;
+	text-align: center;
+
+	background-color: #555;
+	font-weight: bold;
+	color: #FFF;
+}
+
+.placeholder {
+	visibility: hidden;
+}
+/**********************************************************************
+ * code entity styles
+ *********************************************************************/
+
+.asm-line, .src-line {
+	padding: 2pt 5pt 2pt 5pt;
+	display: block;
+}
+
+.asm-token {
+	/*padding: 0 5pt 0 5pt;*/
+	display: inline-block;
+	width: 21%;
+}
+
+.asm-no {
+	padding: 0 5pt 0 0;
+	display: inline-block;
+	width: 6%;
+}
+
+.asm-mnemonic {
+	font-weight: bold;
+}
+
+.token-text {
+	border-radius: 5px;
+	white-space: nowrap;
+	padding: 0 5pt 0 5pt;
+}
+
+.asm-token:hover .token-text {
+	background-color: #DDD;
+}
+
+.asm-label{
+	font-style: italic;
+	color: #8b7355;
+}
+
+.src-line {
+	overflow: hidden;
+}
+
+.c-line {
+	display: inline-block;
+	width: 90%;
+	white-space: pre;
+}
+
+.c-no {
+	display: inline-block;
+	width: 4%;
+}
+
+.line-label {
+	float: right;
+	padding: 2pt 5pt 2pt 5pt;
+
+	font-style: italic;
+	font-size: 10pt;
+	color: gray;
+}
+
+/**********************************************************************
+ * tooltip styles
+ *********************************************************************/
+
+.m-tt, .v-tt {
+	visibility: hidden;
+	position: absolute;
+	text-align: left;
+
+	width: 300px;
+	padding: 10px;
+	border-radius: 5px;
+
+	font-family: sans-serif;
+
+	background-color: rgba(0,0,0,0.9);
+	box-shadow: 3px 3px 2px #888;
+	color: #FFF;
+
+	right: 105%;
+	top: 0;
+	z-index: 2;
+}
+
+.v-tt {
+	min-width: 200px;
+}
+
+.wrapper {
+	position: relative;
+}
+
+.asm-token:hover .m-tt, .asm-token:hover .v-tt {
+	visibility: visible;
+}
+
+.tt-row {
+	display: block;
+}
+
+.tt-left {
+	float: left;
+}
+
+.tt-right {
+	float: right;
+}
+
+.tt-title {
+	font-weight: bold;
+	color: red;
+	display: inline-block;
+}
+
+.tt-syn {
+	font-style: italic;
+	display: inline-block;
+	float: right;
+}
+
+.tt-mnem {
+	font-style: normal;
+	font-family: Monospace;
+	display: inline-block;
+	white-space: pre;
+}
+
+.tt-type {
+	font-family: Monospace;
+	font-weight: bold;
+	color: #c79eed;
+}
+
+.tt-desc {
+	white-space: pre-wrap;
+}
+
+.tt-code {
+	font-family: Monospace;
+	padding: 0 0 0 10pt;
+}
+
+.tt-linum {
+	font-style: italic;
+}
+
+/**********************************************************************
+ * color block styles
+ *********************************************************************/
+
+.loc {
+	border-radius: 5px;
+	cursor: pointer;
+}
+
+.color-1 {
+	background-color: rgba(211, 248, 226, .8);
+}
+
+.color-2 {
+	background-color: rgba(228, 193, 249, .8);
+}
+
+.color-3 {
+	background-color: rgba(244, 146, 212, .8);
+}
+
+.color-4 {
+	background-color: rgba(237, 231, 177, .8);
+}
+
+.color-5 {
+	background-color: rgba(169, 222, 249, .8);
+}
+
+
+/**********************************************************************
+ * Operand token highlighting
+ *********************************************************************/
+
+/* Numbers */
+.token-op-m {
+	color: #858585;
+}
+
+/* Labels */
+.token-op-nl {
+	color: #1F1B53;
+/*	color: #8b7355;
+*/}
+
+/* Registers */
+.token-op-nv {
+	color: #8b3e2f;
+}
+
+/* Punctuation */
+.token-op-p {
+	/* Nothing */
+}
+
+/**********************************************************************
+ * Source token highlighting
+ *********************************************************************/
+
+.c-token-hll{ background-color: #ffffcc }
+.c-token-c 	{ color: #408080; font-style: italic } /* Comment */
+/*.c-token-err { border: 1px solid #FF0000 } /* Error *//**/
+.c-token-k 	{ color: #008000; font-weight: bold } /* Keyword */
+.c-token-o 	{ color: #666666 } /* Operator */
+.c-token-ch { color: #408080; font-style: italic } /* Comment.Hashbang */
+.c-token-cm { color: #408080; font-style: italic } /* Comment.Multiline */
+.c-token-cp { color: #BC7A00 } /* Comment.Preproc */
+.c-token-cpf{ color: #408080; font-style: italic } /* Comment.PreprocFile */
+.c-token-c1 { color: #408080; font-style: italic } /* Comment.Single */
+.c-token-cs { color: #408080; font-style: italic } /* Comment.Special */
+.c-token-kc { color: #008000; font-weight: bold } /* Keyword.Constant */
+.c-token-kd { color: #008000; font-weight: bold } /* Keyword.Declaration */
+.c-token-kn { color: #008000; font-weight: bold } /* Keyword.Namespace */
+.c-token-kp { color: #008000 } /* Keyword.Pseudo */
+.c-token-kr { color: #008000; font-weight: bold } /* Keyword.Reserved */
+.c-token-kt { color: #B00040 } /* Keyword.Type */
+.c-token-m 	{ color: #666666 } /* Literal.Number */
+.c-token-s 	{ color: #BA2121 } /* Literal.String */
+.c-token-na { color: #7D9029 } /* Name.Attribute */
+.c-token-nb { color: #008000 } /* Name.Builtin */
+.c-token-nc { color: #0000FF; font-weight: bold } /* Name.Class */
+.c-token-no { color: #880000 } /* Name.Constant */
+.c-token-nd { color: #AA22FF } /* Name.Decorator */
+.c-token-ni { color: #999999; font-weight: bold } /* Name.Entity */
+.c-token-ne { color: #D2413A; font-weight: bold } /* Name.Exception */
+.c-token-nf { color: #0000FF } /* Name.Function */
+.c-token-nl { color: #A0A000 } /* Name.Label */
+.c-token-nv { color: #19177C } /* Name.Variable */
+.c-token-mb { color: #666666 } /* Literal.Number.Bin */
+.c-token-mf { color: #666666 } /* Literal.Number.Float */
+.c-token-mh { color: #666666 } /* Literal.Number.Hex */
+.c-token-mi { color: #666666 } /* Literal.Number.Integer */
+.c-token-mo { color: #666666 } /* Literal.Number.Oct */
+.c-token-sb { color: #BA2121 } /* Literal.String.Backtick */
+.c-token-sc { color: #BA2121 } /* Literal.String.Char */
+.c-token-sd { color: #BA2121; font-style: italic } /* Literal.String.Doc */
+.c-token-se { color: #BB6622; font-weight: bold } /* Literal.String.Escape */
+.c-token-sh { color: #BA2121 } /* Literal.String.Heredoc */
+.c-token-ss { color: #19177C } /* Literal.String.Symbol */
+.c-token-bp { color: #008000 } /* Name.Builtin.Pseudo */
+.c-token-vc { color: #19177C } /* Name.Variable.Class */
+.c-token-vg { color: #19177C } /* Name.Variable.Global */
+.c-token-vi { color: #19177C } /* Name.Variable.Instance */
+.c-token-il { color: #666666 } /* Literal.Number.Integer.Long */

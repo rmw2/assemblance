@@ -1,0 +1,523 @@
+{
+	"mov"		: {
+		"name"	: "Move",
+		"syn"	: "src dest",
+		"size"	: [0, 0],
+		"type"	: ["IRM", "RM"],
+		"desc"	: "Copy src to dest.",
+		"flags"	: "None"
+	},
+
+	"movabsq"	: {
+		"name"	: "Move",
+		"syn"	: "src dest",
+		"size"	: [8, 8],
+		"type"	: ["IRM", "R"],
+		"desc"	: "Copy src to dest. src can be up to 8 bytes long, and dest must be a register.",
+		"flags"	: "None"
+	},
+
+	"movsb"	: {
+		"name"	: "Move Sign-Extended",
+		"syn"	: "src dest",
+		"size"	: [1, 0],
+		"type"	: ["RM", "R"],
+		"desc"	: "Copy src to dest, extending the sign of src.",
+		"flags"	: "None"
+	},
+
+	"movsw"	: {
+		"name"	: "Move Sign-Extended",
+		"syn"	: "src dest",
+		"size"	: [2, 0],
+		"type"	: ["RM", "R"],
+		"desc"	: "Copy src to dest, extending the sign of src.",
+		"flags"	: "None"
+	},
+
+	"movslq"	: {
+		"name"	: "Move Sign-Extended",
+		"syn"	: "src dest",
+		"size"	: [4, 8],
+		"type"	: ["RM", "R"],
+		"desc"	: "Copy src to dest, extending the sign of src.",
+		"flags"	: "None"
+	},
+
+	"movzb"	: {
+		"name"	: "Move Zero-Extended",
+		"syn"	: "src dest",
+		"size"	: [1, 0],
+		"type"	: ["RM", "R"],
+		"desc"	: "Copy src to dest, setting the high-order bytes of dest to zero.",
+		"flags"	: "None"
+	},
+
+	"movzw"	: {
+		"name"	: "Move Zero-Extended",
+		"syn"	: "src dest",
+		"size"	: [2, 0],
+		"type"	: ["RM", "R"],
+		"desc"	: "Copy src to dest, setting the high-order bytes of dest to zero.",
+		"flags"	: "None"
+	},
+
+	"cmove"		: {
+		"name"	: "Conditional Move (Equal)",
+		"syn"	: "src dest",
+		"size"	: [0,0],
+		"type"	: ["RM", "R"],
+		"desc"	: "Copy long or word operand src to long or word register dest iff the flags in the EFLAGS register indicate an equal to.",
+		"flags"	: "None"
+	},
+
+	"cmovne"	: {
+		"name"	: "Conditional Move (Not Equal)",
+		"syn"	: "src dest",
+		"size"	: [0,0],
+		"type"	: ["RM", "R"],
+		"desc"	: "Copy long or word operand src to long or word register dest iff the flags in the EFLAGS register indicate not equal to.",
+		"flags"	: "None"
+	},
+
+	"cmovl"	: {
+		"name"	: "Conditional Move (Less than)",
+		"syn"	: "src dest",
+		"size"	: [0,0],
+		"type"	: ["RM", "R"],
+		"desc"	: "Copy long or word operand src to long or word register dest iff the flags in the EFLAGS register indicate less than (signed numbers).",
+		"flags"	: "None"
+	},
+
+	"cmovle"	: {
+		"name"	: "Conditional Move (Less than or Equal)",
+		"syn"	: "src dest",
+		"size"	: [0,0],
+		"type"	: ["RM", "R"],
+		"desc"	: "Copy long or word operand src to long or word register dest iff the flags in the EFLAGS register indicate less than (signed numbers) or equal to.",
+		"flags"	: "None"
+	},
+
+	"cmovg"	: {
+		"name"	: "Conditional Move (Greater than)",
+		"syn"	: "src dest",
+		"size"	: [0,0],
+		"type"	: ["RM", "R"],
+		"desc"	: "Copy long or word operand src to long or word register dest iff the flags in the EFLAGS register indicate greater than (signed numbers).",
+		"flags"	: "None"
+	},
+
+	"cmovge"	: {
+		"name"	: "Conditional Move (Greater than or Equal)",
+		"syn"	: "src dest",
+		"size"	: [0,0],
+		"type"	: ["RM", "R"],
+		"desc"	: "Copy long or word operand src to long or word register dest iff the flags in the EFLAGS register indicate greater than or equal to (signed numbers).",
+		"flags"	: "None"
+	},
+
+	"cmovb"	: {
+		"name"	: "Conditional Move (Below)",
+		"syn"	: "src dest",
+		"size"	: [0,0],
+		"type"	: ["RM", "R"],
+		"desc"	: "Copy long or word operand src to long or word register dest iff the flags in the EFLAGS register indicate below (unsigned numbers).",
+		"flags"	: "None"
+	},
+
+	"cmovbe"	: {
+		"name"	: "Conditional Move (Below or Equal)",
+		"syn"	: "src dest",
+		"size"	: [0,0],
+		"type"	: ["RM", "R"],
+		"desc"	: "Copy long or word operand src to long or word register dest iff the flags in the EFLAGS register indicate below (unsigned numbers) or equal.",
+		"flags"	: "None"
+	},
+
+	"cmova"	: {
+		"name"	: "Conditional Move (Above)",
+		"syn"	: "src dest",
+		"size"	: [0,0],
+		"type"	: ["RM", "R"],
+		"desc"	: "Copy long or word operand src to long or word register dest iff the flags in the EFLAGS register indicate above (unsigned numbers).",
+		"flags"	: "None"
+	},
+
+	"cmovae"	: {
+		"name"	: "Conditional Move (Above or Equal)",
+		"syn"	: "src dest",
+		"size"	: [0,0],
+		"type"	: ["RM", "R"],
+		"desc"	: "Copy long or word operand src to long or word register dest iff the flags in the EFLAGS register indicate above (unsigned numbers) or equal.",
+		"flags"	: "None"
+	},
+
+	"pushq"	: {
+		"name"	: "Push",
+		"syn"	: "src",
+		"size"	: [8],
+		"type"	: ["IRM"],
+		"desc"	: "Push quad src onto the stack.  Equivalent to <br><div class='tt-code'>subq $8, %rsp<br>movq src (%rsp)</div>",
+		"flags"	: "None"
+	},
+
+	"pushw"	: {
+		"name"	: "Push",
+		"syn"	: "src",
+		"size"	: [2],
+		"type"	: ["IRM"],
+		"desc"	: "Push word src onto the stack.  Equivalent to <br><div class='tt-code'>subq $2, %rsp<br>movw src (%rsp)</div>",
+		"flags"	: "None"
+	},
+
+	"popq"	: {
+		"name"	: "Push",
+		"syn"	: "src",
+		"size"	: [8],
+		"type"	: ["RM"],
+		"desc"	: "Pop quad from the stack into dest.  Equivalent to <br><div class='tt-code'>movq (%rsp), dest<br>addq $8, %rsp</div>",
+		"flags"	: "None"
+	},
+
+	"popw"	: {
+		"name"	: "Push",
+		"syn"	: "src",
+		"size"	: [2],
+		"type"	: ["RM"],
+		"desc"	: "Pop word from the stack into dest.  Equivalent to <br><div class='tt-code'>movw (%rsp), dest<br>addq $2, %rsp</div>",
+		"flags"	: "None"
+	},
+
+	"lea"	: {
+		"name"	: "Load Effective Address",
+		"syn"	: "src dest",
+		"size"	: [0, 0],
+		"type"	: ["M", "R"],
+		"desc"	: "Assign the address of src to dest. That is, determine the address denoted by src, but don't fetch data from that address; instead use the address itself.",
+		"flags"	: "None"
+	},
+
+	"cqto"	: {
+		"name"	: "Convert Quad to Oct Register",
+		"syn"	: "(no operands)",
+		"size"	: [],
+		"type"	: [],
+		"desc"	: "Sign extend the contents of register RAX into the register pair RDX:RAX, typically in preparation for idivq.",
+		"flags"	: "None"
+	},
+
+	"cltd"	: {
+		"name"	: "Convert Long to Double Register",
+		"syn"	: "(no operands)",
+		"size"	: [],
+		"type"	: [],
+		"desc"	: "Sign extend the contents of register EAX into the register pair EDX:EAX, typically in preparation for idivl.",
+		"flags"	: "None"
+	},
+
+	"cwtd"	: {
+		"name"	: "Convert Word to Double Register",
+		"syn"	: "(no operands)",
+		"size"	: [],
+		"type"	: [],
+		"desc"	: "Sign extend the contents of register AX into the register pair DX:AX, typically in preparation for idivw.",
+		"flags"	: "None"
+	},
+
+	"cbtw"	: {
+		"name"	: "Convert Byte to Word",
+		"syn"	: "(no operands)",
+		"size"	: [],
+		"type"	: [],
+		"desc"	: "Sign extend the contents of register AL into register AX, typically in preparation for idivb.",
+		"flags"	: "None"
+	},
+
+	"add"	: {
+		"name"	: "Add",
+		"syn"	: "src dest",
+		"size"	: [],
+		"type"	: ["IRM", "RM"],
+		"desc"	: "Add src to dest.",
+		"flags"	: "O, S, Z, A, C, P"
+	},
+
+	"adc"	: {
+		"name"	: "Add with carry",
+		"syn"	: "src dest",
+		"size"	: [],
+		"type"	: ["IRM", "RM"],
+		"desc"	: "Add src and the C flag to dest.",
+		"flags"	: "O, S, Z, A, C, P"
+	},
+
+	"sub"	: {
+		"name"	: "Subtract",
+		"syn"	: "src dest",
+		"size"	: [],
+		"type"	: ["IRM", "RM"],
+		"desc"	: "Subtract src from dest.",
+		"flags"	: "O, S, Z, A, C, P"
+	},
+
+	"inc"	: {
+		"name"	: "Add",
+		"syn"	: "dest",
+		"size"	: [],
+		"type"	: [],
+		"desc"	: "Increment dest.",
+		"flags"	: "O, S, Z, A, P"
+	},
+
+	"dec"	: {
+		"name"	: "Decrement",
+		"syn"	: "dest",
+		"size"	: [],
+		"type"	: ["RM"],
+		"desc"	: "Decrement dest.",
+		"flags"	: "O, S, Z, A, P"
+	},
+
+	"neg"	: {
+		"name"	: "Negate",
+		"syn"	: "dest",
+		"size"	: [],
+		"type"	: ["RM"],
+		"desc"	: "Negate dest.",
+		"flags"	: "O, S, Z, A, C, P"
+	},
+
+	"imul"	: {
+		"name"	: "Multiply",
+		"syn"	: "src dest",
+		"size"	: [],
+		"type"	: ["IRM", "RM"],
+		"desc"	: "Multiply src by dest and store the result in dest.",
+		"flags"	: "O, S, Z, A, C, P"
+	},
+
+	"and"	: {
+		"name"	: "And",
+		"syn"	: "src dest",
+		"size"	: [],
+		"type"	: ["IRM", "RM"],
+		"desc"	: "Bitwise and src into dest.",
+		"flags"	: "O, S, Z, A, C, P"
+	},
+
+	"or"	: {
+		"name"	: "Or",
+		"syn"	: "src dest",
+		"size"	: [],
+		"type"	: ["IRM", "RM"],
+		"desc"	: "Bitwise or src into dest.",
+		"flags"	: "O, S, Z, A, C, P"
+	},
+
+	"xor"	: {
+		"name"	: "Exclusive Or",
+		"syn"	: "src dest",
+		"size"	: [],
+		"type"	: ["IRM", "RM"],
+		"desc"	: "Bitwise exclusive or src into dest.",
+		"flags"	: "O, S, Z, A, C, P"
+	},
+
+	"not"	: {
+		"name"	: "Not",
+		"syn"	: "dest",
+		"size"	: [],
+		"type"	: ["RM"],
+		"desc"	: "Bitwise not dest.",
+		"flags"	: "None"
+	},
+
+	"sal"	: {
+		"name"	: "Shift Arithmetic Left",
+		"syn"	: "src dest",
+		"size"	: [],
+		"type"	: ["IR", "RM"],
+		"desc"	: "Shift dest to the left by src bits, filling with zeros.  If src is a register, then it must be the CL register.",
+		"flags"	: "O, S, Z, A, C, P"
+	},
+
+	"sar"	: {
+		"name"	: "Shift Arithmetic Right",
+		"syn"	: "src dest",
+		"size"	: [],
+		"type"	: ["IR", "RM"],
+		"desc"	: "Shift dest to the right by src bits, sign extending the number.  If src is a register, then it must be the CL register.",
+		"flags"	: "O, S, Z, A, C, P"
+	},
+
+	"shl"	: {
+		"name"	: "Shift Left",
+		"syn"	: "src dest",
+		"size"	: [],
+		"type"	: ["IR", "RM"],
+		"desc"	: "Shift dest to the left by src bits, filling with zeros.  If src is a register, then it must be the CL register.  (Same as sal)",
+		"flags"	: "O, S, Z, A, C, P"
+	},
+
+	"shr"	: {
+		"name"	: "Shift Right",
+		"syn"	: "src dest",
+		"size"	: [],
+		"type"	: ["IR", "RM"],
+		"desc"	: "Shift dest to the right by src bits, filling with zeros.  If src is a register, then it must be the CL register.",
+		"flags"	: "O, S, Z, A, C, P"
+	},
+
+	"cmp"	: {
+		"name"	: "Compare",
+		"syn"	: "src dest",
+		"size"	: [0, 0],
+		"type"	: ["IRM", "RM"],
+		"desc"	: "Compute dest - src and set flags in the EFLAGS register based upon the result.",
+		"flags"	: "O, S, Z, A, C, P"
+	},
+
+	"test"	: {
+		"name"	: "Shift Arithmetic Right",
+		"syn"	: "src dest",
+		"size"	: [],
+		"type"	: ["IRM", "RM"],
+		"desc"	: "Compute dest & src and set flags in the EFLAGS register based upon the result.",
+		"flags"	: "O = 0, S, A = 0, Z, P"
+	},
+
+	"ret"	: {
+		"name"	: "Return",
+		"syn"	: "(no operands)",
+		"size"	: [],
+		"type"	: [],
+		"desc"	: "Return from current function.  That is, pop from the stack to the instruction pointer, to return to the address from which the function was called.",
+		"flags"	: "None"
+	},
+
+	"call"	: {
+		"name"	: "Call",
+		"syn"	: "label",
+		"size"	: [],
+		"type"	: [],
+		"desc"	: "Push the address of the next instruction onto the stack and jump to location specified by label.",
+		"flags"	: "None"
+	},
+
+	"jmp"	: {
+		"name"	: "Jump",
+		"syn"	: "label",
+		"size"	: [],
+		"type"	: [],
+		"desc"	: "Jump to the address specified by label, (overwrite the instruction pointer with the address of label).",
+		"flags"	: "None"
+	},
+
+	"je"		: {
+		"name"	: "Conditional Jump (Equal)",
+		"syn"	: "label",
+		"size"	: [],
+		"type"	: [],
+		"desc"	: "Jump to address specified by label iff the flags in the EFLAGS register indicate an equal to.",
+		"flags"	: "None"
+	},
+
+	"jne"	: {
+		"name"	: "Conditional Jump (Not Equal)",
+		"syn"	: "label",
+		"size"	: [],
+		"type"	: [],
+		"desc"	: "Jump to address specified by label iff the flags in the EFLAGS register indicate not equal to.",
+		"flags"	: "None"
+	},
+
+	"jl"	: {
+		"name"	: "Conditional Jump (Less than)",
+		"syn"	: "label",
+		"size"	: [],
+		"type"	: [],
+		"desc"	: "Jump to address specified by label iff the flags in the EFLAGS register indicate less than (signed numbers).",
+		"flags"	: "None"
+	},
+
+	"jle"	: {
+		"name"	: "Conditional Jump (Less than or Equal)",
+		"syn"	: "label",
+		"size"	: [],
+		"type"	: [],
+		"desc"	: "Jump to address specified by label iff the flags in the EFLAGS register indicate less than (signed numbers) or equal to.",
+		"flags"	: "None"
+	},
+
+	"jg"	: {
+		"name"	: "Conditional Jump (Greater than)",
+		"syn"	: "label",
+		"size"	: [],
+		"type"	: [],
+		"desc"	: "Jump to address specified by label iff the flags in the EFLAGS register indicate greater than (signed numbers).",
+		"flags"	: "None"
+	},
+
+	"jge"	: {
+		"name"	: "Conditional Jump (Greater than or Equal)",
+		"syn"	: "label",
+		"size"	: [],
+		"type"	: [],
+		"desc"	: "Jump to address specified by label iff the flags in the EFLAGS register indicate greater than or equal to (signed numbers).",
+		"flags"	: "None"
+	},
+
+	"jb"	: {
+		"name"	: "Conditional Jump (Below)",
+		"syn"	: "label",
+		"size"	: [],
+		"type"	: [],
+		"desc"	: "Jump to address specified by label iff the flags in the EFLAGS register indicate below (unsigned numbers).",
+		"flags"	: "None"
+	},
+
+	"jbe"	: {
+		"name"	: "Conditional Jump (Below or Equal)",
+		"syn"	: "label",
+		"size"	: [],
+		"type"	: [],
+		"desc"	: "Jump to address specified by label iff the flags in the EFLAGS register indicate below (unsigned numbers) or equal.",
+		"flags"	: "None"
+	},
+
+	"ja"	: {
+		"name"	: "Conditional Jump (Above)",
+		"syn"	: "label",
+		"size"	: [],
+		"type"	: [],
+		"desc"	: "Jump to address specified by label iff the flags in the EFLAGS register indicate above (unsigned numbers).",
+		"flags"	: "None"
+	},
+
+	"jae"	: {
+		"name"	: "Conditional Jump (Above or Equal)",
+		"syn"	: "label",
+		"size"	: [],
+		"type"	: [],
+		"desc"	: "Jump to address specified by label iff the flags in the EFLAGS register indicate above (unsigned numbers) or equal.",
+		"flags"	: "None"
+	},
+
+	"nop"	: {
+		"name"	: "No Operation",
+		"syn"	: "(no operands)",
+		"size"	: [],
+		"type"	: [],
+		"desc"	: "Do nothing for some specified number of clock cycles.",
+		"flags"	: "None"
+	},
+
+	"leave"	: {
+		"name"	: "Leave",
+		"syn"	: "(no operands)",
+		"size"	: [],
+		"type"	: [],
+		"desc"	: "Copy %rbp to %rsp and pop from the stack to %rbp, restoring the stack frame of the caller before returning.  This is the opposite of enter.",
+		"flags"	: "None"
+	}
+}

@@ -1,0 +1,129 @@
+<html>
+<head>
+
+	<title>assemblance</title>
+
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+	<link href="https://fonts.googleapis.com/css?family=Josefin+Sans" rel="stylesheet">
+	<link rel="stylesheet" href={{url_for('static', filename='style.css')}} >
+
+	<script type="text/javascript" src={{url_for('static', filename="interact.js") }}></script>
+
+</head>
+<body>
+
+<div id="page" class="container-fluid">
+	<!-- Toolbar / control area -->
+	<div class="row" id="top">
+		<!-- Title area -->
+		<a href="/">
+		<div class="col-sm-3" id="title">
+			<h1> assemblance </h1>
+		</div>
+		</a>
+
+		<!-- Flashed messages -->
+		<div class="col-sm-6" id="flash-container">
+			{% for message in get_flashed_messages() %}
+	    		<div class="flash">{{ message }}</div>
+	  		{% endfor %}
+	  	</div>
+
+	  	<!-- Navigation -->
+	  	<div class="col-sm-3" id="menu">
+	  		<a href="http://github.com/rmw2/Assemblance"><div class="menu-item"> github </div></a>
+	  		<a href={{ url_for('about') }}><div class="menu-item"> about </div></a>
+	  	</div>
+
+	  	<div class="clear"></div>
+  	</div>
+
+	<!-- Text area -->
+	<div class="row" id="main">
+		<!-- left column of the page -->
+		<div class="col-sm-6" id="source">
+			<div class="tools">
+			<div class="tool">
+				<span class="label-header"> source </span>
+			</div>
+			<div class="tool">
+				<div id="c-filename">
+					<span id="c-filename-text">{{ fname }}</span>
+				</div>
+			</div>
+
+			<div class="tool">
+				<form id="file-form" method="post" enctype="multipart/form-data">
+					<input type="file" class="inputfile" id="upload-src" name="srcfile">
+					<label class="label-button" for="upload-src"> upload file </label>
+					<input id="opt-val" name="opt" type="hidden" value={{ opt }}>
+					<div class="clear"></div>
+				</form>
+			</div>
+			</div>
+
+			<div class="wrapper">
+			<div id="source-code" class="content">
+				{% if srctext %}
+					{{srctext|safe}}
+				{% else %} Source goes here.
+				{% endif %}
+			</div>
+			</div>
+		</div>
+
+		<!-- right column of the page -->
+		<div class="col-sm-6" id="asm">
+			<div class="tools">
+			<!-- Name -->
+			<div class="tool">
+				<span class="label-header"> assembly </span>
+			</div>
+
+			<!-- Placeholder -->
+			<div class="tool">
+				<div class="placeholder">hidden placeholder</div>
+			</div>
+
+			<!-- optimization-level select -->
+			<div class="tool">
+				<!-- optimization level select -->
+				<form id="opt-form">
+				<div id="opt-button-holder" class="button-holder">
+					<div id="opt-buttons" class="btn-group" data-toggle="buttons">
+					  <label class="btn btn-primary {% if opt == '-O0' %} active {% endif %}">
+					    <input type="radio" name="options" value="-O0" id="O0" class="obutton" autocomplete="off" {% if opt == '-O0' %} checked {% endif %}> -O0
+					  </label>
+					  <label class="btn btn-primary {% if opt == '-O1' %} active {% endif %}">
+					    <input type="radio" name="options" value="-O1" id="O1" class="obutton" autocomplete="off" {% if opt == '-O1' %} checked {% endif %}> -O1
+					  </label>
+					  <label class="btn btn-primary {% if opt == '-O2' %} active {% endif %}">
+					    <input type="radio" name="options" value="-O2" id="O2" class="obutton" autocomplete="off" {% if opt == '-O2' %} checked {% endif %}> -O2
+					  </label>
+					  <label class="btn btn-primary {% if opt == '-O3' %} active {% endif %}">
+					    <input type="radio" name="options" value="-O3" id="O3" class="obutton" autocomplete="off" {% if opt == '-O3' %} checked {% endif %}> -O3
+					  </label>
+					</div>
+					<div class="button-label">optimization level</div>
+				</div>
+				</form>	<!--</form>-->
+			</div>
+			<div class="clear"></div>
+			</div>
+
+			<div class="wrapper">
+			<div id="asm-code" class="content">
+				{% if asmtext %}
+					{{asmtext|safe}}
+				{% else %} Assembly goes here.
+				{% endif %}
+			</div>
+			</div>
+		</div><!-- /.container -->
+	</div>
+</div>
+
+</body>
+</html>
