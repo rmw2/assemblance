@@ -22,11 +22,12 @@ UPLOADS_FOLDER = 'uploads'
 app = Flask(__name__)
 app.config['UPLOADS_FOLDER'] = UPLOADS_FOLDER
 
-COMPILER = ['/usr/local/gcc-4.8.1-for-linux64/bin/x86_64-pc-linux-gcc']
+COMPILER = ['gcc']
 #COMPILER = ['clang', '-target', 'x86_64-linux-elf']
 
 # Secret key to maintain sessions
-app.secret_key = 'not so secret'
+with open('.secret', 'r') as file:
+    app.secret_key = file.readlines()
 
 #**********************************************************************
 # Request functions
