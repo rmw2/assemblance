@@ -1,6 +1,6 @@
 import os, sys, pwd, grp
 
-INTERP = "/n/fs/asm/src/venv/bin/python"
+INTERP = "/n/fs/asm/src/pyenv/bin/python"
 if sys.executable != INTERP: os.execl(INTERP, INTERP, *sys.argv)
 
 def get_username():
