@@ -9,6 +9,4 @@ def get_username():
 def get_groups():
     return grp.getgrgid(os.getgid()).gr_name
 
-def application(env, start_response):
-    start_response('200 OK', [('Content-Type','text/html')])
-    return ["Hello World!"]
+from main import app as application
