@@ -7,8 +7,8 @@ from flask import Flask, request, flash, redirect, render_template, session, g
 from werkzeug.utils import secure_filename
 
 # project files
-from parse import process_asm, format_c
-from dwarf import CDwarf
+from .parse import process_asm, format_c
+from .dwarf import CDwarf
 
 # standard packages
 import os, subprocess, shutil
@@ -33,6 +33,19 @@ with open('.secret', 'r') as file:
 # Request functions
 #**********************************************************************
 
+def serve_errors(function):
+    """ Decorator to cause routing functions to serve the text of exceptions.
+    """
+    def error_serving_function(*args, **kwargs):
+        try:
+            function()
+        except Exception as e:
+            response = str(e)
+            return response
+
+    return error_serving_function
+
+#@serve_errors
 @app.route('/', methods=['GET', 'POST'])
 def index():
     """ Index: serve the homepage and handle file uploads.
@@ -103,11 +116,11 @@ def index():
         )
 
 
-@app.route('/about')
-def about():
-    """ Serve the static about page.
-    """
-    return "It's some good stuff.  By Rob Whitaker."
+# @app.route('/about')
+# def about():
+#     """ Serve the static about page.
+#     """
+#     return "It's some good stuff.  By Rob Whitaker."
 
 
 # @app.after_request
@@ -129,7 +142,7 @@ def clean_all():
             shutil.rmtree(os.path.join(UPLOADS_FOLDER, d))
 
 # Run after loading module but before handling requests
-clean_all()
+# clean_all()
 
 #**********************************************************************
 # Utility functions
@@ -189,3 +202,4 @@ def do_compile(filename, opt='-O0', compiler=COMPILER):
     ofile = open(ofilepath, 'rb')
 
     return asm, ofile
+

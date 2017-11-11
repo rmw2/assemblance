@@ -1,8 +1,8 @@
 # TODO: Add support for line mapping
 
 from elftools.elf.elffile import ELFFile
-from constants import *
-from x86 import regs
+from .constants import *
+from .x86 import regs
 
 class CDwarf():
     """ A class representing a C program's debugging information.
