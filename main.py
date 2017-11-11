@@ -7,8 +7,8 @@ from flask import Flask, request, flash, redirect, render_template, session, g
 from werkzeug.utils import secure_filename
 
 # project files
-from .parse import process_asm, format_c
-from .dwarf import CDwarf
+from parse import process_asm, format_c
+from dwarf import CDwarf
 
 # standard packages
 import os, subprocess, shutil
