@@ -11,7 +11,7 @@ from parse import process_asm, format_c
 from dwarf import CDwarf
 
 # standard packages
-import os, subprocess, shutil
+import os, subprocess, shutil, traceback
 from elftools.elf.elffile import ELFFile
 from uuid import uuid4
 
@@ -27,25 +27,13 @@ COMPILER = ['gcc']
 
 # Secret key to maintain sessions
 with open('.secret', 'r') as file:
-    app.secret_key = file.readlines()
+    app.secret_key = file.readline()
+    print(app.secret_key)
 
 #**********************************************************************
 # Request functions
 #**********************************************************************
 
-def serve_errors(function):
-    """ Decorator to cause routing functions to serve the text of exceptions.
-    """
-    def error_serving_function(*args, **kwargs):
-        try:
-            function()
-        except Exception as e:
-            response = str(e)
-            return response
-
-    return error_serving_function
-
-#@serve_errors
 @app.route('/', methods=['GET', 'POST'])
 def index():
     """ Index: serve the homepage and handle file uploads.
@@ -60,53 +48,60 @@ def index():
         g.opt = '-O0'
 
     if request.method == 'POST':
-        print('Received files: ', request.files)
-        if 'srcfile' in request.files and request.files['srcfile'].filename != '':
-            # Get file from request if it exists and save to uploads folder
-            file = request.files['srcfile']
+        try:
+            print('Received files: ', request.files)
+            if 'srcfile' in request.files and request.files['srcfile'].filename != '':
+                # Get file from request if it exists and save to uploads folder
+                file = request.files['srcfile']
+                if g.debug:
+                    print('Using uploaded file: %s' % file.filename)
+
+                # Save file on the server and cache name and source text on the session
+                session['src'], session['filename'] = save_to_uploads(file)
+                print('Session filename = ', session['filename'])
+
+            elif 'filename' in session:
+                if g.debug:
+                    print('Using cached file: %s' % session['filename'])
+            else:
+                if g.debug:
+                    print('File not found in upload and filename not in cache.')
+                    print('Session variables:')
+                    for key in session:
+                        print('\t%s:\t%s' % (key, session[key]))
+                raise RuntimeError('File not found')
+
+            # Compile with specified optimization
+            g.opt = request.form['opt']
+            print("Compiling with optimization %s" % g.opt)
+
+            try: asm, ofile = do_compile(session['filename'], g.opt)
+            except RuntimeError:
+                flash('compilation failed')
+                return redirect(request.url)
+
+            # Parse ELF
+            dwarf = CDwarf(ofile, verbose=False)
+            g.locs = dwarf.offset_to_name()
             if g.debug:
-                print('Using uploaded file: %s' % file.filename)
+                from pprint import pprint
+                pprint(g.locs)
 
-            # Save file on the server and cache name and source text on the session
-            session['src'], session['filename'] = save_to_uploads(file)
-            print('Session filename = ', session['filename'])
+            # Process
+            (session['asm-markup'], colors) = process_asm(asm)
+            session['src-markup'] = format_c(session['src'], colors)
 
-        elif 'filename' in session:
-            if g.debug:
-                print('Using cached file: %s' % session['filename'])
-        else:
-            if g.debug:
-                print('File not found in upload and filename not in cache.')
-                print('Session variables:')
-                for key in session:
-                    print('\t%s:\t%s' % (key, session[key]))
-            raise RuntimeError('File not found')
+            return render_template( 'index.html',
+                    opt = g.opt,
+                    fname=session['filename'],
+                    srctext=session['src-markup'],
+                    asmtext=session['asm-markup'])
+        except Exception as e:
+            flash('error')
+            return render_template('index.html',
+                    asmtext=traceback.format_exc()
+                )
 
-        # Compile with specified optimization
-        g.opt = request.form['opt']
-        print("Compiling with optimization %s" % g.opt)
-
-        try: asm, ofile = do_compile(session['filename'], g.opt)
-        except RuntimeError:
-            flash('compilation failed')
-            return redirect(request.url)
-
-        # Parse ELF
-        dwarf = CDwarf(ofile, verbose=False)
-        g.locs = dwarf.offset_to_name()
-        if g.debug:
-            from pprint import pprint
-            pprint(g.locs)
-
-        # Process
-        (session['asm-markup'], colors) = process_asm(asm)
-        session['src-markup'] = format_c(session['src'], colors)
-
-        return render_template( 'index.html',
-                opt = g.opt,
-                fname=session['filename'],
-                srctext=session['src-markup'],
-                asmtext=session['asm-markup'])
 
     return render_template( 'index.html',
             opt = g.opt,
