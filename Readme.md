@@ -7,6 +7,10 @@ A similar project developed by Matt Godbolt can be found at http://gcc.godbolt.c
 
 Special thanks to Bob Dondero for his advising during this project, and the x86-64 resources he developed for Princeton's COS217: Systems Programming.
 
+## Limitations
+* At this point the project will be restricted to the same subset of x86-64 used by Princeton's COS217.  Specifically this excludes floating point arithmetic and assumes that functions take no more than six arguments, and that structs are not passed as arguments.
+* It's possible that there are some cases of compiler optimization that have not been accounted for in the process of DWARF parsing, if you encounter an error of any kind, let me know!
+
 ## Progress
 * (3/9)  Compiled dictionary of assembly mnemonics in static/ref.json
 * (3/10) Boilerplate for uploading a file to the server
@@ -48,17 +52,4 @@ Special thanks to Bob Dondero for his advising during this project, and the x86-
   - Still requires re-upload of file...
 * (4/15) Added filename display to UI
 * (4/22) Fixed back and front end for optimization and merged with master
-
-## TODO
-* Finish variable name / memory address correspondance
-  - Highlight declaration line in source on hover (with javascript, somehow encode declaration line in attributes for token? data-decl-line=$LINE)
-  - Handle formatting with javascript
-* Improve aesthetics
-  - scale font size to screen width
-  - add operand size and type to tooltips
-* Support optimization
-  - cache markup for each optimization level so you don't need to recompile
-
-
-## Limitations
-* At this point the project will be restricted to the same subset of x86-64 used by Princeton's COS217.  Specifically this excludes floating point arithmetic and assumes that functions take no more than six arguments, and that structs are not passed as arguments.
+* (11/17) LIVE on assemblance.cs.princeton.edu
